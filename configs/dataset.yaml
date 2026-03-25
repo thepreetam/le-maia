@@ -1,0 +1,84 @@
+# LeWM-VC Dataset Configuration
+# Sample YAML for dataset loading in training pipeline
+# See blueprint.md lines 95-98 for dataset requirements
+
+# Training dataset configuration
+train:
+  videos:
+    - path: "data/uvg/train/video_001.yuv"
+      fps: 30
+      frame_count: 600
+      resolution: [1920, 1080]
+    - path: "data/uvg/train/video_002.yuv"
+      fps: 30
+      frame_count: 600
+      resolution: [1920, 1080]
+    - path: "data/uvg/train/video_003.yuv"
+      fps: 30
+      frame_count: 600
+      resolution: [1920, 1080]
+    - path: "data/uvg/train/video_004.yuv"
+      fps: 30
+      frame_count: 600
+      resolution: [1920, 1080]
+    - path: "data/uvg/train/video_005.yuv"
+      fps: 30
+      frame_count: 600
+      resolution: [1920, 1080]
+    - path: "data/uvg/train/video_006.yuv"
+      fps: 30
+      frame_count: 600
+      resolution: [1920, 1080]
+    - path: "data/uvg/train/video_007.yuv"
+      fps: 30
+      frame_count: 600
+      resolution: [1920, 1080]
+    - path: "data/kinetics/train/video_001.mp4"
+      fps: 30
+      frame_count: 300
+      resolution: [256, 256]
+    - path: "data/kinetics/train/video_002.mp4"
+      fps: 30
+      frame_count: 300
+      resolution: [256, 256]
+    - path: "data/kinetics/train/video_003.mp4"
+      fps: 30
+      frame_count: 300
+      resolution: [256, 256]
+  # Data augmentation settings
+  augmentation:
+    horizontal_flip: true
+    color_jitter: true
+    random_crop: true
+
+# Validation dataset configuration
+val:
+  videos:
+    - path: "data/uvg/val/video_001.yuv"
+      fps: 30
+      frame_count: 600
+      resolution: [1920, 1080]
+    - path: "data/uvg/val/video_002.yuv"
+      fps: 30
+      frame_count: 600
+      resolution: [1920, 1080]
+    - path: "data/uvg/val/video_003.yuv"
+      fps: 30
+      frame_count: 600
+      resolution: [1920, 1080]
+
+# Test dataset configuration
+test:
+  videos:
+    - path: "data/uvg/test/video_001.yuv"
+      fps: 30
+      frame_count: 600
+      resolution: [1920, 1080]
+    - path: "data/mcljcv/test/video_001.yuv"
+      fps: 30
+      frame_count: 500
+      resolution: [1920, 1080]
+    - path: "data/xiph/test/video_001.yuv"
+      fps: 24
+      frame_count: 480
+      resolution: [1920, 1080]
