@@ -5,8 +5,8 @@ Implements NAL/OBU bitstream serialization and deserialization.
 Contains writer and reader classes for video bitstream handling.
 """
 
-from .writer import BitstreamWriter, NALUnitType
 from .reader import BitstreamReader
+from .writer import BitstreamWriter, NALUnitType
 
 __all__ = [
     "BitstreamWriter",

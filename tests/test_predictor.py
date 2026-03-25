@@ -219,8 +219,8 @@ class TestLeWMPredictorIntegration:
 
     def test_encoder_predictor_roundtrip(self):
         """Test encoding then predicting."""
-        from src.lewm_vc.encoder import LeWMEncoder
         from src.lewm_vc.decoder import LeWMDecoder
+        from src.lewm_vc.encoder import LeWMEncoder
 
         encoder = LeWMEncoder(latent_dim=192)
         predictor = LeWMPredictor(latent_dim=192)

@@ -5,12 +5,11 @@ Implements differentiable quantization with straight-through estimator (STE)
 for training, and hard rounding for inference. Includes QAT wrapper stubs.
 """
 
-from typing import Optional
 from enum import Enum
+from typing import Optional
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 
 class QuantMode(Enum):

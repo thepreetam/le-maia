@@ -6,11 +6,9 @@ Converts YUV420 frames into latent representations with optional
 semantic surprise detection for physics implausibility.
 """
 
-from typing import Optional
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 
 class LeWMEncoder(nn.Module):

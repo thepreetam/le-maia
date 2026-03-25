@@ -7,14 +7,13 @@ different modes, and QAT wrapper stubs.
 
 import pytest
 import torch
-import torch.nn as nn
 
 from src.lewm_vc.quant import (
-    Quantizer,
-    QuantMode,
     AIMETQuantStub,
     NNCFQuantStub,
     QuantizedTensor,
+    Quantizer,
+    QuantMode,
     quantize_tensor,
 )
 

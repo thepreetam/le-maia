@@ -7,7 +7,7 @@ Tests bitstream writer and reader with round-trip encoding/decoding.
 import pytest
 import torch
 
-from src.lewm_vc.bitstream import BitstreamWriter, BitstreamReader, NALUnitType
+from src.lewm_vc.bitstream import BitstreamReader, BitstreamWriter, NALUnitType
 
 
 class TestBitstreamWriter:

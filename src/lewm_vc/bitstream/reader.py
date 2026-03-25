@@ -6,10 +6,9 @@ Complements BitstreamWriter for round-trip encoding/decoding.
 """
 
 from enum import IntEnum
-from typing import Optional
 
-import torch
 import numpy as np
+import torch
 
 
 class NALUnitType(IntEnum):
@@ -196,8 +195,8 @@ class BitstreamReader:
 
         try:
             nal_unit_type = NALUnitType(nal_type)
-        except ValueError:
-            raise ValueError(f"Unknown NAL unit type: {nal_type}")
+        except ValueError as err:
+            raise ValueError(f"Unknown NAL unit type: {nal_type}") from err
 
         return nal_unit_type, payload
 

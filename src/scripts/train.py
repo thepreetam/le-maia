@@ -11,15 +11,13 @@ Loss formula (exact per blueprint.md line 91):
     L = λ·Rate + (0.7·MSE + 0.3·LPIPS) + 0.01·surprise
 """
 
-import os
-import sys
-import yaml
 from pathlib import Path
-from typing import Optional, Any
+from typing import Optional
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import yaml
 from torch.utils.data import DataLoader, Dataset
 from torch.utils.tensorboard import SummaryWriter
 
@@ -597,7 +595,7 @@ if __name__ == "__main__":
     with open(args.config, "r") as f:
         config = yaml.safe_load(f)
 
-    from lewm_vc import LeWMEncoder, LeWMPredictor, LeWMDecoder
+    from lewm_vc import LeWMDecoder, LeWMEncoder, LeWMPredictor
     from lewm_vc.entropy import HyperpriorEntropy
     from lewm_vc.quant import Quantizer
     from lewm_vc.utils import RateController

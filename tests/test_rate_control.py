@@ -2,7 +2,6 @@
 Unit tests for RateController module.
 """
 
-import pytest
 import torch
 
 

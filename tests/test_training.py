@@ -2,15 +2,15 @@
 Unit tests for Training Pipeline.
 """
 
+import os
+import sys
+
 import pytest
 import torch
-import torch.nn as nn
-import sys
-import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from scripts.train import TrainingPhase, VideoDataset, LeWMTrainer
+from scripts.train import LeWMTrainer, TrainingPhase, VideoDataset
 
 
 def test_training_phase_enum():
@@ -72,7 +72,7 @@ def test_video_dataset_getitem():
 
 def test_lewm_trainer_initialization():
     """Test LeWMTrainer initializes correctly."""
-    from lewm_vc import LeWMEncoder, LeWMPredictor, LeWMDecoder
+    from lewm_vc import LeWMDecoder, LeWMEncoder, LeWMPredictor
     from lewm_vc.entropy import HyperpriorEntropy
     from lewm_vc.quant import Quantizer
     from lewm_vc.utils.rate_control import RateController
@@ -106,7 +106,7 @@ def test_lewm_trainer_initialization():
 
 def test_lewm_trainer_phase_switch():
     """Test phase switching logic."""
-    from lewm_vc import LeWMEncoder, LeWMPredictor, LeWMDecoder
+    from lewm_vc import LeWMDecoder, LeWMEncoder, LeWMPredictor
     from lewm_vc.entropy import HyperpriorEntropy
     from lewm_vc.quant import Quantizer
     from lewm_vc.utils.rate_control import RateController
@@ -140,7 +140,7 @@ def test_lewm_trainer_phase_switch():
 
 def test_lewm_trainer_invalid_phase():
     """Test invalid phase raises error."""
-    from lewm_vc import LeWMEncoder, LeWMPredictor, LeWMDecoder
+    from lewm_vc import LeWMDecoder, LeWMEncoder, LeWMPredictor
     from lewm_vc.entropy import HyperpriorEntropy
     from lewm_vc.quant import Quantizer
     from lewm_vc.utils.rate_control import RateController
@@ -171,7 +171,7 @@ def test_lewm_trainer_invalid_phase():
 
 def test_compute_loss_output_shape():
     """Test loss computation produces correct output structure."""
-    from lewm_vc import LeWMEncoder, LeWMPredictor, LeWMDecoder
+    from lewm_vc import LeWMDecoder, LeWMEncoder, LeWMPredictor
     from lewm_vc.entropy import HyperpriorEntropy
     from lewm_vc.quant import Quantizer
     from lewm_vc.utils.rate_control import RateController
@@ -211,7 +211,7 @@ def test_compute_loss_output_shape():
 
 def test_trainer_save_checkpoint(tmp_path):
     """Test checkpoint saving."""
-    from lewm_vc import LeWMEncoder, LeWMPredictor, LeWMDecoder
+    from lewm_vc import LeWMDecoder, LeWMEncoder, LeWMPredictor
     from lewm_vc.entropy import HyperpriorEntropy
     from lewm_vc.quant import Quantizer
     from lewm_vc.utils.rate_control import RateController
@@ -246,7 +246,7 @@ def test_trainer_save_checkpoint(tmp_path):
 
 def test_trainer_load_checkpoint(tmp_path):
     """Test checkpoint loading."""
-    from lewm_vc import LeWMEncoder, LeWMPredictor, LeWMDecoder
+    from lewm_vc import LeWMDecoder, LeWMEncoder, LeWMPredictor
     from lewm_vc.entropy import HyperpriorEntropy
     from lewm_vc.quant import Quantizer
     from lewm_vc.utils.rate_control import RateController
@@ -305,7 +305,7 @@ def test_trainer_load_checkpoint(tmp_path):
 
 def test_trainer_close():
     """Test trainer close cleans up resources."""
-    from lewm_vc import LeWMEncoder, LeWMPredictor, LeWMDecoder
+    from lewm_vc import LeWMDecoder, LeWMEncoder, LeWMPredictor
     from lewm_vc.entropy import HyperpriorEntropy
     from lewm_vc.quant import Quantizer
     from lewm_vc.utils.rate_control import RateController

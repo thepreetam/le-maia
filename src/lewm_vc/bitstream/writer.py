@@ -8,8 +8,8 @@ Supports 7 NAL unit types per specification.
 from enum import IntEnum
 from typing import Optional
 
-import torch
 import numpy as np
+import torch
 
 
 class NALUnitType(IntEnum):
