@@ -205,8 +205,12 @@ def train(epochs=100, batch_size=4, lr=1e-4, resolution=512):
             loss_l1 = l1_loss_fn(reconstructed, batch)
 
             if use_perceptual and perceptual_loss_fn is not None and epoch > 5:
+                # LPIPS expects 4D: flatten batch and frames
+                b, f, c, h, w = reconstructed.shape
+                reconstructed_4d = reconstructed.view(b * f, c, h, w)
+                batch_4d = batch.view(b * f, c, h, w)
                 # LPIPS expects [-1, 1] range
-                loss_perc = perceptual_loss_fn(reconstructed * 2 - 1, batch * 2 - 1).mean()
+                loss_perc = perceptual_loss_fn(reconstructed_4d * 2 - 1, batch_4d * 2 - 1).mean()
                 loss = loss_l1 + 0.1 * loss_perc
                 total_perc += loss_perc.item()
             else:
