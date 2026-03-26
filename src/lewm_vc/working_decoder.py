@@ -2,7 +2,7 @@
 LeWM-VC Video Decoder
 
 Decoder that reconstructs RGB frames from latent representations.
-Uses transposed convolutions for upsampling with skip connections.
+Uses transposed convolutions with residual blocks for better quality.
 """
 
 import torch
@@ -10,25 +10,42 @@ import torch.nn as nn
 import torch.nn.functional as functional
 
 
+class ResidualBlock(nn.Module):
+    """Residual block with instance normalization."""
+
+    def __init__(self, channels: int):
+        super().__init__()
+        self.norm1 = nn.InstanceNorm2d(channels)
+        self.conv1 = nn.Conv2d(channels, channels, 3, padding=1)
+        self.norm2 = nn.InstanceNorm2d(channels)
+        self.conv2 = nn.Conv2d(channels, channels, 3, padding=1)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        residual = x
+        x = functional.gelu(self.norm1(x))
+        x = self.conv1(x)
+        x = functional.gelu(self.norm2(x))
+        x = self.conv2(x)
+        return x + residual
+
+
 class LeWMDecoder(nn.Module):
     """
-    Video decoder that upsamples latent representations to RGB frames.
-
-    Architecture:
+    Video decoder with improved architecture:
         - Project latent_dim -> hidden_dim
-        - 4 upsampling blocks (each 2x spatial resolution)
-        - Final projection to RGB
+        - 4 upsampling blocks with residual connections
+        - Deeper processing for better reconstruction
 
     Args:
         latent_dim: Input latent dimension (default: 192)
-        hidden_dim: Hidden dimension (default: 256)
+        hidden_dim: Hidden dimension (default: 512)
         output_channels: Output channels (default: 3 for RGB)
     """
 
     def __init__(
         self,
         latent_dim: int = 192,
-        hidden_dim: int = 256,
+        hidden_dim: int = 512,
         output_channels: int = 3,
     ):
         super().__init__()
@@ -37,18 +54,23 @@ class LeWMDecoder(nn.Module):
         self.proj = nn.Conv2d(latent_dim, hidden_dim, kernel_size=1)
 
         self.up1 = nn.ConvTranspose2d(hidden_dim, hidden_dim // 2, kernel_size=4, stride=2, padding=1)
-        self.norm1 = nn.BatchNorm2d(hidden_dim // 2)
+        self.res1 = ResidualBlock(hidden_dim // 2)
 
         self.up2 = nn.ConvTranspose2d(hidden_dim // 2, hidden_dim // 4, kernel_size=4, stride=2, padding=1)
-        self.norm2 = nn.BatchNorm2d(hidden_dim // 4)
+        self.res2 = ResidualBlock(hidden_dim // 4)
 
         self.up3 = nn.ConvTranspose2d(hidden_dim // 4, hidden_dim // 8, kernel_size=4, stride=2, padding=1)
-        self.norm3 = nn.BatchNorm2d(hidden_dim // 8)
+        self.res3 = ResidualBlock(hidden_dim // 8)
 
         self.up4 = nn.ConvTranspose2d(hidden_dim // 8, hidden_dim // 16, kernel_size=4, stride=2, padding=1)
-        self.norm4 = nn.BatchNorm2d(hidden_dim // 16)
+        self.res4 = ResidualBlock(hidden_dim // 16)
 
-        self.final = nn.Conv2d(hidden_dim // 16, output_channels, kernel_size=3, padding=1)
+        self.final = nn.Sequential(
+            nn.Conv2d(hidden_dim // 16, hidden_dim // 32, 3, padding=1),
+            nn.InstanceNorm2d(hidden_dim // 32),
+            nn.GELU(),
+            nn.Conv2d(hidden_dim // 32, output_channels, 3, padding=1),
+        )
 
     def forward(self, latent: torch.Tensor, target_size: tuple = None) -> torch.Tensor:
         """
@@ -63,10 +85,17 @@ class LeWMDecoder(nn.Module):
         """
         x = self.proj(latent)
 
-        x = functional.gelu(self.norm1(self.up1(x)))
-        x = functional.gelu(self.norm2(self.up2(x)))
-        x = functional.gelu(self.norm3(self.up3(x)))
-        x = functional.gelu(self.norm4(self.up4(x)))
+        x = self.up1(x)
+        x = self.res1(x)
+
+        x = self.up2(x)
+        x = self.res2(x)
+
+        x = self.up3(x)
+        x = self.res3(x)
+
+        x = self.up4(x)
+        x = self.res4(x)
 
         x = self.final(x)
         x = torch.sigmoid(x)
