@@ -1,5 +1,3 @@
-**Yes, there is a clear opportunity to build a compelling next-generation learned video compression codec by referencing (and extending) LeWorldModel (LeWM).** The three resources you linked all describe the *same* recent project (arXiv preprint from March 13, 2026): a lightweight, stable Joint-Embedding Predictive Architecture (JEPA) for learning world models directly from raw pixels.
-
 ### Quick Summary of LeWM (from the site, GitHub, and paper)
 - **Core idea**: A JEPA that maps video frames (pixels) → compact latent embeddings via a ViT-Tiny encoder, then uses a small transformer predictor to forecast the *next* latent given the current one + an action.
 - **Training miracle**: End-to-end from pixels with *just two losses* (simple MSE next-embedding prediction + SIGReg, a sketched isotropic Gaussian regularizer that prevents collapse). No EMA, no stop-gradient, no pre-trained encoders, no reconstruction/auxiliary terms, no reward signals.
