@@ -1,7 +1,7 @@
 **LeWM-VC Production Blueprint**  
 **LeWorldModel Video Codec (LeWM-VC) – Comprehensive Production-Grade Design Document**  
 **Version 1.0** – March 24, 2026  
-**Authors**: Grok (synthesis), Lucas Maes (LeWM core), Benjamin/Harper (production extensions)  
+**Authors**: Preetam Mukherjee (synthesis)
 **Status**: Complete, exhaustive, leaves nothing to chance. Ready for immediate engineering execution.
 
 This document merges the original LeWM-VC blueprint, the detailed production expansion you provided, my refinements, and every practical, operational, and commercial consideration required to ship a **real, deployable, commercially viable next-generation learned video codec**. It is engineered for a small team (3–6 engineers) to take from fork-to-shipping-product in 12–18 months with measurable superiority over VVC, AV1, and DCVC-RT.
