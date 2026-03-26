@@ -11,134 +11,180 @@ Prioritized next-step roadmap for LeWM-VC, a JEPA-based video codec with stable 
 
 ---
 
-## 1. Immediate: Make it reproducible and benchmarkable (1–2 weeks)
+## Proprietary IP Strategy
 
-Highest-leverage step. Without solid numbers, it's hard for others to care or build on it.
+**This roadmap assumes LeWM-VC is treated as proprietary IP** — internal tool, startup asset, licensing candidate, or acquisition bait. Focus on defensibility, performance proof, and controlled demonstration rather than public visibility.
 
-### Run standard video compression benchmarks
+---
 
-**Datasets:**
-- UVG, HEVC Class B/C/D/E, MCL-JCV, or Vimeo-90K for training/validation
+## 1. Secure and Benchmark Internally (1–2 weeks)
+
+### Lock it down
+
+- [ ] Move full codebase to private repo (GitHub private, GitLab, or internal system)
+- [ ] Add strict access controls
+- [ ] Watermark outputs if needed
+- [ ] Document every unique component for IP protection
+
+**Documented components:**
+- SIGReg Gaussian entropy modeling
+- Semantic surprise detection for quality gating
+- JEPA-specific temporal predictor with NAL serialization
+- Learned λ + CRF-style rate control
+- FFmpeg C wrapper integration
+
+### Run rigorous private benchmarks
+
+**Test sequences:**
+- UVG, HEVC CTC Class B/C/D/E, Xiph
+- Internal high-value content: 4K/8K, surveillance, gaming, medical video
 
 **Metrics:**
-- BD-rate (vs. x265 medium, VTM/H.266, DCVC, ELF-VC) at multiple rate points
-- PSNR, MS-SSIM, LPIPS/DISTS/VMAF (perceptual quality)
+- Full rate-distortion curves: bitrate vs. PSNR, MS-SSIM, VMAF, LPIPS
+- Encode/decode speed (FPS on CPU/GPU)
+- Memory footprint
+- Surprise-detection bitrate savings
 
-**Baselines to compare:**
-- Traditional: x265, VVC/VTM
-- Neural: DCVC family, recent real-time NVCs, VC-VAE-style hybrids
+**Baselines:**
+- Traditional: x265 (HEVC), AV1 (libaom/SVT-AV1), VVC
+- Learned: DCVC, VCT, recent neural codecs
 
-**Expected advantages:**
-- Semantic surprise detection + SIGReg could shine on perceptual quality
-- Robustness to "physics implausible" artifacts
+**Edge cases to test:**
+- Long sequences, scene cuts, high-motion, low-light
+- Where JEPA world-model prediction should outperform traditional motion compensation
 
-### Add ablation studies
-
-- Impact of SIGReg on rate-distortion
-- Temporal predictor depth/layers vs. bitrate savings
-- Semantic surprise module: rate allocation or quality assurance
-
-### Polish the repo
+### Internal documentation
 
 ```
 benchmarks/
-├── scripts/          # Benchmark scripts
-├── results/          # Results tables
-├── README.md         # Commands and expected numbers
+├── scripts/           # Reproducible benchmark scripts
+├── results/           # Raw RD curves and logs
+├── comparison/        # vs. baselines
+└── internal_memo.md  # Technical summary
 ```
 
-- Pre-trained models on Hugging Face or Google Drive
-- Clear README with encoding/decoding commands
-- FFmpeg integration example: `ffmpeg -i input.mp4 -c:v lewm_vc output.mkv`
+---
+
+## 2. Strengthen Uniqueness and IP (Weeks 1–3, parallel)
+
+### Ablate and harden
+
+- [ ] Internal ablations on JEPA-specific pieces
+  - ViT-Tiny encoder + 8-layer SIGReg predictor vs. plain VAE/transformer baselines
+  - Quantify semantic surprise detection improvements
+  - Rate allocation gains from physics-implausibility gating
+- [ ] Document failure modes and where LeWM-VC holds up vs. traditional codecs
+
+### Patent considerations
+
+Consult IP counsel on filing for:
+- "JEPA-based latent video coding with SIGReg entropy modeling"
+- "Semantic surprise-aware rate allocation in learned video compression"
+- "NAL-unit integration with learned world-model latents"
+- Specific NAL serialization format extensions
+
+Even provisional filings create defensibility.
+
+### Internal API layer
+
+Build clean interfaces for:
+- Drop-in FFmpeg filter or library integration
+- Configurable modes:
+  - `low-latency`: Real-time streaming
+  - `high-compression`: Maximum RD efficiency
+  - `surveillance`: Surprise gating for anomaly detection
 
 ---
 
-## 2. Short-term: Improve performance & practicality (2–6 weeks)
+## 3. Controlled Demonstrations and Business Case (Weeks 3–6)
 
-Focus on making it competitive or uniquely useful.
+### Private demos
 
-### Rate-distortion optimization
+- [ ] Side-by-side comparisons (original vs. encoded/decoded)
+- [ ] Real-world use cases:
+  - "30% lower bitrate at same perceptual quality for drone footage"
+  - "Faster-than-real-time decoding with world-model prediction"
+  - "Surprise detection flags anomalous events in security footage"
+- [ ] Runtime metrics dashboard
+- [ ] Failure-mode analysis (where traditional codecs break but LeWM-VC holds)
 
-- Fine-tune learned λ adaptation and CRF-style QP
-- Variable-rate support (single model for multiple bitrates)
-- Better entropy modeling (advanced hyperpriors, context-adaptive arithmetic coding)
+### Internal materials
 
-### Speed & efficiency
+**Technical memo structure:**
+```
+1. Architecture overview (1 page)
+2. Key innovations (SIGReg, surprise detection, JEPA predictor)
+3. Benchmark results (RD curves, speed, memory)
+4. Use cases and ROI projections
+5. IP status and protection steps
+```
 
-- Profile encoding/decoding FPS on CPU/GPU/mobile
-- Quantization-aware training (QAT) improvements
-- Reduce latency for real-time use
+**Pitch deck angle:**
+> "LeWM-VC: JEPA World-Model Video Codec — turning stable pixel-to-latent prediction into practical compression with semantic awareness."
 
-### Leverage JEPA strengths
+### Monetization paths
 
-- Use **semantic surprise** for adaptive rate control
-- World-model integration: better inter-frame prediction
-- Perceptual post-filter: LPIPS + adversarial loss
-
-### FFmpeg plugin maturity
-
-- Bidirectional compatibility (encode/decode)
-- Support for common containers and streaming protocols
-
----
-
-## 3. Medium-term: Expand & differentiate (1–3 months)
-
-Where LeWM-VC can stand out from generic neural codecs.
-
-### Write and submit a paper
-
-**Target venues:**
-- NeurIPS, CVPR, ICCV
-- Workshops on neural compression / world models
-
-**Angle:**
-> "First JEPA-based end-to-end video codec with stable training via SIGReg, semantic surprise awareness, and production FFmpeg integration."
-
-### Open-source & community
-
-- Release the full repo publicly
-- Add examples for robotics/video generation downstream tasks
-- Integrate with LeWorldModel repo (lucas-maes/le-wm)
-
-### Unique extensions
-
-- Scalable to higher resolutions using compact 192-dim CLS token
-- Multimodal or action-conditioned compression
-- Error-resilient streaming with surprise detection
+| Path | Description |
+|------|-------------|
+| Internal deployment | Roll out in product/pipeline for storage/bandwidth savings |
+| Licensing | Under NDA to video platforms, cloud providers, hardware vendors |
+| Acquisition | Position as differentiated neural codec asset |
+| Partnership | Selective collab with LeWM team under NDA |
 
 ---
 
-## 4. Long-term vision
+## 4. Longer-term Technical Roadmap
 
-Position LeWM-VC as a bridge between **learned compression** and **predictive world models**.
+### Scale and enhance
 
-**Killer applications:**
-- Extremely low-bitrate video for robotics/teleoperation
-- Perceptually superior compression for UGC or streaming
-- Unified framework for compression + simulation/prediction in agents
+- [ ] 1080p/4K/8K testing
+- [ ] Longer GOP support (hierarchical prediction)
+- [ ] Surprise-aware rate control (allocate bits to anomalous events)
+- [ ] Multi-scale latents for progressive quality
+
+### Extensions
+
+- Action-conditioned prediction (if action inputs available)
+- Analysis on compressed latents without full decode
+- Downstream task integration (robotics, autonomous systems)
+
+### Keep training stable
+
+- Continue QAT stubs and hyperprior entropy model improvements
+- Maintain SIGReg regularization discipline
 
 ---
 
-## Quick prioritization checklist
+## Quick-win Actions This Week
 
-| Priority | Task | Timeline |
-|----------|------|----------|
-| 1 | Run benchmarks on UVG + push results to README | Today |
-| 2 | Fix installation/FFmpeg issues, add inference speed numbers | This week |
-| 3 | Ablations + perceptual improvements | Next |
-| 4 | Paper draft + public release | Then |
+- [ ] Run benchmarks on 2–3 standard sequences vs. x265 at multiple QP/CRF points
+- [ ] Draft short internal technical memo summarizing architecture + early RD results
+- [ ] Review IP protection steps with legal/management
+- [ ] Set up access controls on repo
 
 ---
 
-## Technical notes
+## Open Source Alternative Path
 
-### Why LeWM-VC is different
+*For reference only — not the primary strategy.*
 
-1. **SIGReg stability**: Only 2 losses needed (MSE + SIGReg), no EMA teacher
+If open-sourcing later:
+1. Pre-trained models on Hugging Face
+2. Benchmark results in README
+3. Paper submission (NeurIPS, CVPR, ICCV workshops)
+4. Community building around learned compression + JEPA
+
+---
+
+## Technical Summary
+
+### Why LeWM-VC is defensible
+
+1. **SIGReg stability**: Only 2 losses (MSE + SIGReg), no EMA teacher
 2. **Gaussian latents**: 192-dim isotropic Gaussians = near-ideal entropy prior
-3. **Semantic surprise**: Physics implausibility detection for adaptive compression
+3. **Semantic surprise**: Physics implausibility detection (unique)
 4. **JEPA architecture**: Temporal prediction without explicit motion estimation
+5. **Clean integration**: Production-ready FFmpeg C wrapper
 
 ### Key parameters (v1)
 
@@ -154,12 +200,11 @@ Position LeWM-VC as a bridge between **learned compression** and **predictive wo
 
 ---
 
-## Resources
+## Confidentiality
 
-- [LeWorldModel (LeWM)](https://github.com/lucas-maes/le-wm) - MIT licensed
-- [V-JEPA](https://github.com/facebookresearch/vjepa) - Meta's JEPA variant
-- [DCVC](https://arxiv.org/abs/2009.13108) - Deep contextual video compression
-- [VTM Reference Software](https://vcgit.hhi.fraunhofer.de/jvet/VVCSoftware_VTM) - VVC test model
+**This document is proprietary and confidential.**
+
+Do not share externally without authorization.
 
 ---
 
