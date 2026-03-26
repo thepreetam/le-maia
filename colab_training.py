@@ -20,11 +20,38 @@ from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
 
 # Download PEViD-HD dataset
+print("Downloading PEViD-HD dataset from EPFL...")
 !mkdir -p datasets/pevid-hd
-!cd datasets/pevid-hd && wget -q http://iis.uach.cl/PEViD-HD/dataset/PEViD-HD_v1.0.zip || echo "Download from EPFL FTP manually"
 
-# Or use a sample video for quick testing
-!curl -L -o datasets/pevid-hd/sample.mp4 "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4" 2>/dev/null || echo "Using placeholder"
+# Try EPFL PEViD-HD download (PEViD-HD is from EPFL Computer Vision Lab)
+!cd datasets/pevid-hd && \
+curl -O ftp://ftp.ividepro.cl/PEViD-HD/PEViD-HD_v1.0.zip 2>/dev/null || \
+curl -O ftp://ftp.kth.edu/multimedia/PEViD-HD/PEViD-HD_v1.0.zip 2>/dev/null || \
+echo "FTP download failed, trying HTTP..."
+
+# Try HTTP alternative
+!cd datasets/pevid-hd && \
+wget -q "http://iis.uach.cl/PEViD-HD/dataset/PEViD-HD_v1.0.zip" 2>/dev/null || \
+echo "Trying 4TU repository..."
+
+# Alternative: Download from 4TU Research Data
+!cd datasets/pevid-hd && \
+curl -L -o PEViD-HD.zip "https://data.4tu.nl/ndownloader/files/23915525" 2>/dev/null || \
+echo "Trying Kaggle..."
+
+# Fallback: Download sample videos from Xiph.org (free, no auth needed)
+print("Downloading sample videos from Xiph.org...")
+!cd datasets/pevid-hd && \
+curl -L -o crowd_run.zip "https://media.xiph.org/video/derf/HD/crowd_run.zip" 2>/dev/null && \
+unzip -o crowd_run.zip 2>/dev/null || \
+echo "Using alternative sample..."
+
+# Unzip anything we got
+!cd datasets/pevid-hd && unzip -o "*.zip" 2>/dev/null; unzip -o "*.zip" -d PEViD 2>/dev/null
+
+# Check what we have
+!echo "Files in datasets/pevid-hd:"
+!find datasets/pevid-hd -name "*.mp4" -o -name "*.avi" -o -name "*.mkv" 2>/dev/null | head -20
 
 print(f"CUDA available: {torch.cuda.is_available()}")
 print(f"Device: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU'}")
