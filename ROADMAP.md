@@ -15,6 +15,23 @@ Prioritized next-step roadmap for LeWM-VC, a JEPA-based video codec with stable 
 
 **This roadmap assumes LeWM-VC is treated as proprietary IP** — internal tool, startup asset, licensing candidate, or acquisition bait. Focus on defensibility, performance proof, and controlled demonstration rather than public visibility.
 
+### Key Differentiators
+
+| Feature | Why It Matters |
+|---------|---------------|
+| JEPA World-Model Foundation | Stable pixel-to-latent prediction via SIGReg |
+| Semantic Surprise Detection | Physics-implausibility gating for quality/rate |
+| SIGReg Gaussian Entropy | Near-ideal entropy prior, minimal rate overhead |
+| LPIPS Perceptual Post-Filter | Superior subjective quality |
+| Production FFmpeg Integration | Clean deployment path |
+
+### Timing Advantage
+
+- InterDigital acquired Deep Render (Oct 2025) for AI-native codec tech
+- MPEG/JVET actively exploring NNVC and Beyond-VVC (H.267)
+- World-model funding surging ($1B+ in early 2026)
+- LeWM-VC positioned as "next logical acquisition" after Deep Render
+
 ---
 
 ## 1. Secure and Benchmark Internally (1–2 weeks)
@@ -353,135 +370,151 @@ Build clean interfaces for:
 
 ## Domain Focus Priorities
 
-### 1. Next-Generation Video Compression (Core Fit)
+### 1. Surveillance & Security (Highest Priority)
 
-**Focus**: AI/hybrid codecs with better perceptual quality or bitrate savings vs. HEVC/AV1/VVC
+**Focus**: Edge-AI cameras, VSaaS platforms, long-term storage, real-time analytics
 
-**Why it matches:**
-- Semantic surprise detection enables physics-aware bit allocation
-- Lower quality on predictable frames, higher on anomalous events
-- Production hooks: FFmpeg plugin, rate control
-
-**Use cases:**
-- Streaming platforms
-- Cloud video storage
-- Broadcast
-- Mobile delivery
-
-**Standards context:**
-- MPEG/JVET exploring NNVC and Beyond-VVC (H.267)
-- InterDigital acquiring Deep Render signals IP-heavy players betting on AI-native compression
-
-### 2. Embodied AI / Robotics & World Models
-
-**Focus**: JEPA-style predictors for temporal forecasting, physics simulation, surprise handling
+**ROI hook**:
+> "30–50% effective bitrate reduction on normal footage while auto-highlighting implausible events — no extra compute for separate anomaly detection."
 
 **Why it matches:**
-- 8-layer transformer predictor + semantic surprise detection
-- Action anticipation, long-horizon planning
-- Robustness to physics-implausible events
-- V-JEPA 2 alignment (zero-shot robot control)
-
-**Use cases:**
-- Robotic manipulation
-- Autonomous drones/vehicles
-- Simulation for training
-
-### 3. Surveillance / Security / Edge Video Analytics
-
-**Focus**: Physics-aware quality assurance, dynamic rate allocation for anomalous events
-
-**Why it matches:**
-- Surprise detection auto-optimizes bitrate
+- Semantic surprise detection = automatic anomaly flagging
+- Aggressive compression on predictable scenes
+- Physics priors detect out-of-distribution events
 - Latent-space analysis without full decode
-- Flag anomalies in security footage
 
-**Use cases:**
-- Drone footage
-- Security cameras
-- Low-bandwidth remote monitoring
+**2026 trends:**
+- Real-time edge analytics
+- Low-bandwidth proactive monitoring
+- AI-driven incident response
 
-### 4. Cloud / Streaming Optimization
+### 2. Drones / UAV / Remote Sensing & Defense
 
-**Focus**: Perceptual delivery with LPIPS-trained post-filter + learned λ adaptation
+**Focus**: ISR (Intelligence, Surveillance, Reconnaissance), autonomous flight
+
+**ROI hook**:
+> "Physics-aware rate control reduces satellite/5G link costs dramatically."
 
 **Why it matches:**
-- User-perceived quality focus
-- Storage/transmission cost reduction
-- Clean FFmpeg integration path
+- Bandwidth-constrained transmission
+- World-model prediction for stable long-GOP compression
+- High-motion, low-light robustness
+- Edge deployment optimization
+
+**Market:**
+- Defense budgets exploding for autonomous ISR
+- Onboard AI integration
+
+### 3. Robotics & Embodied AI
+
+**Focus**: Video-based planning, teleoperation, physics-aware world models
+
+**ROI hook**:
+> "Compressed latents enable faster downstream analysis without full decode."
+
+**Why it matches:**
+- Direct synergy with JEPA-style world models
+- V-JEPA lineage alignment (Meta)
+- Surprise detection for real-world robustness
+- World-model funding surging ($1B+ in early 2026)
+
+### 4. Cloud Streaming / OTT / Video Archiving
+
+**Focus**: Massive video libraries, Netflix/YouTube-style AI encoding
+
+**ROI hook**:
+> "BD-rate gains + VMAF/LPIPS leadership on long-form content."
+
+**Why it matches:**
+- LPIPS-trained perceptual post-filter
+- Learned λ adaptation
+- Massive storage/transmission savings
+
+### 5. Edge / Mobile / Hardware-Constrained Video
+
+**Focus**: On-device decode, semiconductor integration
+
+**Why it matches:**
+- FFmpeg plugin ready
+- Quantization-aware training
+- FPS/memory optimizations
 
 ---
 
 ## Tiered Acquirer Strategy
 
-### Tier 1: Best Fit (High Likelihood of Interest)
+### Tier 1: Video IP / Licensing Powerhouses (Best Fit, Fastest Path)
 
-| Company | Profile | Approach Angle |
-|---------|---------|----------------|
-| InterDigital | AI-native push, post-VVC positioning | BD-rate gains, standards complementarity |
-| Dolby | Compression licensing heavyweight | Perceptual quality wins |
-| Adeia | Patent monetization | Novel IP in learned compression |
-| Nokia | Video IP portfolio | JEPA novelty for standards |
-| Sisvel | Patent pools | Pure IP play |
+| Company | Why Target | Approach |
+|---------|-----------|----------|
+| **InterDigital** | Just acquired Deep Render Oct 2025 for AI-native codec tech. JEPA + surprise = cleaner extension. | NDA + patent portfolio discussion |
+| Dolby | Compression licensing heavyweight, expanding AI portfolios | Perceptual quality wins |
+| Adeia | Patent monetization, AI compression interest | Novel IP positioning |
+| Nokia | Video IP portfolio, Beyond-VVC positioning | Standards complementarity |
+| Sisvel | Patent pools, pure IP play | Quick liquidity option |
 
-### Tier 2: Strong Strategic Buyers
+### Tier 2: Big Tech Video / Cloud Platforms
 
-| Company | Profile | Approach Angle |
-|---------|---------|----------------|
-| Google/YouTube | Massive video infrastructure | Direct compression savings |
-| Meta | V-JEPA investment, world models | Latent-space advantages |
-| Amazon/AWS | Prime Video, cloud storage | ROI on bandwidth costs |
-| Netflix | Video quality optimization | Perceptual quality focus |
-| ByteDance/TikTok | Video-heavy platform | Scale + efficiency gains |
-| Qualcomm | Edge/mobile inference | FPS/memory on mobile |
-| Nvidia | Tensor core optimization | Hardware synergy |
-| ARM | Mobile silicon | Edge deployment value |
+| Company | Why Target | Approach |
+|---------|-----------|----------|
+| **Meta** | V-JEPA lineage, LeCun connection, world-model investment | Cultural fit + latent analysis synergies |
+| Google/YouTube | Massive bandwidth bills, AI encoding pipelines | Direct compression ROI |
+| Amazon/AWS | Prime Video, cloud storage costs | Storage/bandwidth savings |
+| Netflix | Video quality optimization expertise | Perceptual quality focus |
+| ByteDance/TikTok | Video-heavy, efficiency-focused | Scale + efficiency |
+| Apple | History of quiet AI video acquisitions | Premium positioning |
 
-### Tier 3: Emerging Fits
+### Tier 3: Hardware / Semiconductor Leaders
 
-| Company | Profile | Approach Angle |
-|---------|---------|----------------|
-| Robotics/Embodied AI | Physical agent simulation | Surprise detection for robustness |
-| Patent brokers | GTT-style divestitures | Pure IP liquidity |
+| Company | Why Target | Approach |
+|---------|-----------|----------|
+| Qualcomm | Edge/mobile inference, 5G video | FPS/memory on mobile |
+| Nvidia | Tensor core optimization, DRIVE platform | Hardware synergy |
+| Intel | Edge AI, video analytics | Integration ease |
+| ARM | Mobile silicon, IoT edge | Edge deployment |
+
+### Tier 4: Robotics / Physical AI Pure-Plays
+
+**Profile**: Companies building embodied AI or their acquirers
+
+**Why**: Physics-aware video understanding, world-model integration
 
 ---
 
-## Positioning by Profile
+## Positioning Narrative
 
-### For IP/Licensing Companies
-- Stress patentable novelty (JEPA + surprise in codec context)
-- Potential SEP contribution to future standards
-- Patent portfolio strengthening
+**Lead with Surveillance + Drones** in confidential teaser:
+- Easiest to demo with side-by-side clips
+- Strongest differentiation ("this isn't just another neural codec")
+- Clear ROI story
 
-### For Big Tech/Platforms
-- Highlight private benchmark wins on their content types
-- High-motion streaming, drone video examples
-- Integration ease
+**Core narrative**:
+> "JEPA-world-model codec that turns recent stable pixel-to-latent prediction into production compression with built-in semantic intelligence — positioned exactly where InterDigital is betting post-Deep Render."
 
-### For Hardware
-- Provide FPS/memory numbers on target devices
-- Quantization-aware training details
-- Tensor core optimization paths
+**Valuation signal**:
+- Reference Deep Render deal (AI talent + patents)
+- NNVC track in MPEG/JVET momentum
+- Explosive world-model funding (2026)
 
 ---
 
 ## Outreach Strategy
 
-### Initial outreach (2–4 months)
-1. Select 2–3 Tier 1 targets (warm fits)
-2. Use: corporate development, advisors, intermediaries
-3. Lead with NDA + teaser
+### Phase 1: Immediate (Weeks 1–4)
+1. **InterDigital** — NDA + patent portfolio discussion
+2. **Meta** — world-model synergy angle
+3. **Qualcomm** — hardware edge play
+
+### Phase 2: Expansion (Weeks 5–8)
+- Dolby, Adeia (licensing)
+- Google, Amazon (streaming)
+- Defense contractors (drones)
 
 ### Demo package
-- "20–30% effective bitrate reduction on 4K streaming"
-- Better perceptual scores at equivalent bitrate
-- Side-by-side clips under evaluation
-
-### Diligence readiness
-- Team bios
-- IP status summary
-- Scalability roadmap
-- Clean RD curve data
+- Side-by-side clips: original vs. LeWM-VC at equivalent bitrate
+- Surprise detection demo: auto-flagging anomalous events
+- RD curves: vs. H.264, H.265, AV1
+- FPS/memory benchmarks on target hardware
 
 ---
 
