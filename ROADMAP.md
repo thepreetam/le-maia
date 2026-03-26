@@ -133,7 +133,91 @@ Build clean interfaces for:
 
 ---
 
-## 4. Longer-term Technical Roadmap
+## 4. Controlled Validation & Early Traction (Weeks 6–12)
+
+### Internal deployment pilot
+
+- [ ] Integrate LeWM-VC into one real production pipeline:
+  - Internal video storage or streaming
+  - Analytics or content delivery
+  - Security footage with surprise detection
+- [ ] Track end-to-end gains:
+  - Storage/bandwidth savings
+  - Decode speed on target hardware (CPU/mobile/edge)
+  - Qualitative wins from perceptual post-filter
+  - Auto-flagging implausible frames in security footage
+- [ ] Measure over weeks of real traffic: total cost reduction, quality consistency
+
+### Selective NDA-based evaluations
+
+- [ ] Identify 2–4 target partners/customers who value your differentiators
+- [ ] Possible targets:
+  - Video platform/cloud providers (heavy compression needs)
+  - Drone/autonomous systems companies (surprise detection)
+  - Hardware vendors looking for neural codec IP
+- [ ] Share: binaries, APIs, or black-box access + side-by-side clips/metrics
+- [ ] **Never share source code**
+- [ ] Gather feedback: integration ease, hardware compatibility, use-case fit
+
+### Refine based on data
+
+- [ ] Tune hyperparameters from pilot results:
+  - Latent dim, predictor depth, rate controller
+- [ ] Add targeted features:
+  - Low-power mobile decode mode
+  - Downstream analysis directly on latents (no full decode)
+
+---
+
+## 5. Business Execution (3–12+ months)
+
+### If building as product/feature
+
+- [ ] Scale to production:
+  - Real-time/low-latency modes
+  - Multi-GPU training
+  - Deployment: Docker, edge devices
+- [ ] Expand use cases:
+  - Surveillance (surprise-aware bit allocation)
+  - Cloud storage compression
+  - Hybrid workflows (video search/analysis on latents)
+- [ ] Build team:
+  - Hardware acceleration (tensor cores optimization)
+  - Compliance testing (regulated industries)
+  - Reliability hardening
+
+### If pursuing licensing/partnership/acquisition
+
+- [ ] Prepare pitch package:
+  - One-pager
+  - Confidential technical whitepaper (architecture overview, benchmark curves vs. HEVC/AV1, demo videos)
+  - No code or implementation details
+- [ ] Approach ecosystem players:
+  - Companies investing in learned/neural compression
+  - World-model video players (robotics, AR/VR, streaming)
+- [ ] Engage standards bodies:
+  - Monitor JVET/MPEG Neural Network Video Coding (NNVC)
+  - Beyond-VVC (H.267) efforts
+  - File patents before contributing
+
+### Defensive/offensive IP strategy
+
+- [ ] Continue patent filings:
+  - Semantic surprise + SIGReg entropy in predictive world-model codec
+- [ ] Monitor patent landscape in learned video coding
+- [ ] Watch competitor publications (transformer-based, predictive latent codecs)
+
+### Risk mitigation
+
+| Risk | Mitigation |
+|------|------------|
+| Fast-moving research | Iterate quickly on longer sequences, hierarchical prediction |
+| Standards competition | File patents first, engage indirectly |
+| Resource constraints | Budget for compute, legal, hardware ports |
+
+---
+
+## 6. Longer-term Technical Roadmap
 
 ### Scale and enhance
 
