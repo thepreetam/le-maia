@@ -1,22 +1,31 @@
 # LeWM-VC FFmpeg Plugin Makefile
+# Supports: ARM64 (Apple Silicon), ARM32 (ARMv7), x86_64
 
 CC ?= gcc
 CFLAGS ?= -O2 -fPIC -Wall
 
-# Python configuration
-PYTHON_CONFIG := python3-config
-PYTHON_CFLAGS := $(shell $(PYTHON_CONFIG) --cflags 2>/dev/null || echo "-I/usr/include/python3.11")
-PYTHON_LIBS := $(shell $(PYTHON_CONFIG) --ldflags 2>/dev/null || echo "-lpython3.11")
+# Build targets
+TARGET ?= native
+
+ifeq ($(TARGET),arm64)
+    CC := arm64-apple-darwin21-
+    CFLAGS += -march=armv8.2-a
+else ifeq ($(TARGET),arm32)
+    CC := arm-linux-gnueabihf-gcc
+    CFLAGS += -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard
+else ifeq ($(TARGET),rpi4)
+    CC := aarch64-linux-gnu-gcc
+    CFLAGS += -march=armv8-a+crc+fp16+simd
+endif
+
+# Python configuration (use python3.14)
+PYTHON_VERSION := 3.14
+PYTHON_CFLAGS := -I/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/include/python3.14
+PYTHON_LIBS := -F/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks -framework Python
 
 # FFmpeg configuration
-FFMPEG_CFLAGS := $(shell pkg-config --cflags libavcodec libavutil 2>/dev/null)
-FFMPEG_LIBS := $(shell pkg-config --libs libavcodec libavutil 2>/dev/null)
-
-# Fallback for systems without pkg-config
-ifeq ($(FFMPEG_CFLAGS),)
-FFMPEG_CFLAGS := -I/usr/include -I/usr/local/include
-FFMPEG_LIBS := -lavcodec -lavutil -lavformat
-endif
+FFMPEG_CFLAGS := -I/opt/homebrew/Cellar/ffmpeg/8.1/include
+FFMPEG_LIBS := -L/opt/homebrew/lib -lavcodec -lavutil -lavformat
 
 # Additional flags
 CFLAGS += $(PYTHON_CFLAGS) $(FFMPEG_CFLAGS) -D__STDC_CONSTANT_MACROS

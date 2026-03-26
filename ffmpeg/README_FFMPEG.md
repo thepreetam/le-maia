@@ -103,6 +103,82 @@ def get_encoder(name: str) -> Encoder: ...
 def get_decoder(name: str) -> Decoder: ...
 ```
 
+## ARM Build Targets
+
+### Apple Silicon (ARM64)
+
+```bash
+cd ffmpeg
+make clean
+make TARGET=arm64
+# Output: liblewmvc.so (Mach-O arm64)
+```
+
+### Raspberry Pi Builds
+
+#### ARM32 (ARMv7) - Raspberry Pi 2/3/Zero 2 W
+
+Requires cross-compiler:
+```bash
+# Install cross-compiler on macOS
+brew install arm-linux-gnueabihf-gcc
+
+# Or on Linux
+sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+
+# Build
+make clean
+make TARGET=arm32 CC=arm-linux-gnueabihf-gcc
+```
+
+#### ARM64 (ARMv8) - Raspberry Pi 4/5
+
+```bash
+# Install cross-compiler
+brew install aarch64-linux-gnu-gcc
+
+# Or on Linux
+sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+# Build
+make clean
+make TARGET=rpi4 CC=aarch64-linux-gnu-gcc
+```
+
+#### Native build on Raspberry Pi
+
+```bash
+sudo apt-get install ffmpeg libavcodec-dev libavutil-dev python3-dev
+cd ffmpeg
+make
+```
+
+### Cross-compilation from macOS
+
+1. Install toolchain:
+```bash
+brew install --cask gcc-arm-embedded
+# or
+brew install crosstool-ng
+```
+
+2. Configure toolchain for ARM:
+```bash
+export PATH="/opt/arm/bin:$PATH"
+export CC=arm-none-eabi-gcc
+```
+
+### Verification
+
+Check architecture of built library:
+```bash
+file liblewmvc.so
+# Expected outputs:
+# - Mach-O 64-bit arm64 (Apple Silicon)
+# - ELF 32-bit ARM (Raspberry Pi ARM32)
+# - ELF 64-bit ARM aarch64 (Raspberry Pi ARM64)
+```
+
 ## Troubleshooting
 
 ### "codec not found" error

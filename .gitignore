@@ -1,32 +1,19 @@
-# Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
-*$py.class
-
-# Distribution / packaging
-.Python
-build/
-dist/
+*.pyc
 *.egg-info/
-
-# Virtual environments
 .venv/
 venv/
-ENV/
-
-# IDE
-.idea/
-.vscode/
-*.swp
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Jupyter
-.ipynb_checkpoints/
-
-# OS
-.DS_Store
-Thumbs.db
+*.so
+*.o
+*.png
+*.mp4
+*.mpg
+*.avi
+*.mkv
+*.pt
+*.json
+checkpoints/
+datasets/
+benchmark/
+benchmark_data/
+*.log
