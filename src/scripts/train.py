@@ -12,11 +12,10 @@ Loss formula (exact per blueprint.md line 91):
 """
 
 from pathlib import Path
-from typing import Optional
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+import torch.nn.functional
 import yaml
 from torch.utils.data import DataLoader, Dataset
 from torch.utils.tensorboard import SummaryWriter
@@ -121,7 +120,7 @@ def load_dataset_yaml(yaml_path: str) -> dict:
     Returns:
         Dataset configuration dictionary
     """
-    with open(yaml_path, "r") as f:
+    with open(yaml_path) as f:
         config = yaml.safe_load(f)
     return config
 
@@ -181,7 +180,7 @@ class LeWMTrainer:
             "rate_controller": rate_controller,
         }
 
-        self.writer: Optional[SummaryWriter] = None
+        self.writer: SummaryWriter | None = None
         if config.get("logging", {}).get("tensorboard", False):
             log_dir = config.get("logging", {}).get("log_dir", "runs")
             self.writer = SummaryWriter(log_dir)
@@ -198,7 +197,7 @@ class LeWMTrainer:
 
     def _setup_phase(self) -> None:
         """Configure models based on current training phase."""
-        phase_name = TrainingPhase.get_name(self.current_phase)
+        TrainingPhase.get_name(self.current_phase)
 
         if self.current_phase == TrainingPhase.DECODER_WARMUP:
             for name, model in self.models.items():
@@ -242,13 +241,13 @@ class LeWMTrainer:
         Returns:
             Dictionary with loss components
         """
-        B, T = frames.shape[:2]
+        b, num_frames = frames.shape[:2]
 
         latents = []
         surprises = []
 
-        for t in range(T):
-            frame = frames[:, t]
+        for frame_idx in range(num_frames):
+            frame = frames[:, frame_idx]
             encoder_output = self.encoder(frame, return_surprise=True)
             if isinstance(encoder_output, tuple):
                 latent, surprise = encoder_output
@@ -260,16 +259,16 @@ class LeWMTrainer:
                 surprises.append(surprise)
 
         predicted_latents = []
-        for t in range(1, T):
-            context = latents[:t]
+        for frame_idx in range(1, num_frames):
+            context = latents[:frame_idx]
             pred_mean, pred_std = self.predictor(context)
             predicted_latents.append((pred_mean, pred_std))
 
         residuals = []
         rates = []
 
-        for t in range(1, T):
-            residual = latents[t] - predicted_latents[t - 1][0]
+        for frame_idx in range(1, num_frames):
+            residual = latents[frame_idx] - predicted_latents[frame_idx - 1][0]
             residuals.append(residual)
 
             quant_residual = self.quantizer(residual)
@@ -277,14 +276,14 @@ class LeWMTrainer:
             rates.append(rate)
 
         reconstructions = []
-        for t in range(T):
-            quant_latent = self.quantizer(latents[t])
+        for frame_idx in range(num_frames):
+            quant_latent = self.quantizer(latents[frame_idx])
             recon = self.decoder(quant_latent)
             reconstructions.append(recon)
 
         reconstructions = torch.stack(reconstructions, dim=1)
 
-        mse_loss = F.mse_loss(reconstructions, frames)
+        mse_loss = torch.nn.functional.mse_loss(reconstructions, frames)
 
         lpips_loss = self._compute_lpips_loss(reconstructions, frames)
 
@@ -327,7 +326,7 @@ class LeWMTrainer:
         Returns:
             LPIPS loss (scalar)
         """
-        return F.mse_loss(pred, target)
+        return torch.nn.functional.mse_loss(pred, target)
 
     def train_step(
         self,
@@ -346,10 +345,10 @@ class LeWMTrainer:
         """
         frames = batch["frames"].to(self.device)
 
-        B, T = frames.shape[:2]
+        b, t = frames.shape[:2]
 
         complexity = self.rate_controller.estimate_complexity(
-            torch.randn(B, 192, 16, 16, device=self.device)
+            torch.randn(b, 192, 16, 16, device=self.device)
         )
         complexity = complexity.mean().item()
 
@@ -592,7 +591,7 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="cuda", help="Device to use")
     args = parser.parse_args()
 
-    with open(args.config, "r") as f:
+    with open(args.config) as f:
         config = yaml.safe_load(f)
 
     from lewm_vc import LeWMDecoder, LeWMEncoder, LeWMPredictor

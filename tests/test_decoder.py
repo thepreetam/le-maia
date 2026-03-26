@@ -22,14 +22,14 @@ class TestLeWMDecoder:
     @pytest.fixture
     def sample_latent(self):
         """Create a sample latent tensor for testing."""
-        B, C, H, W = 2, 192, 256, 256
-        return torch.randn(B, C, H // 16, W // 16)
+        b, c, h, w = 2, 192, 256, 256
+        return torch.randn(b, c, h // 16, w // 16)
 
     @pytest.fixture
     def sample_residual(self):
         """Create a sample residual tensor for testing."""
-        B, C, H, W = 2, 3, 256, 256
-        return torch.randn(B, C, H, W)
+        b, c, h, w = 2, 3, 256, 256
+        return torch.randn(b, c, h, w)
 
     def test_decoder_initialization(self, decoder):
         """Test that decoder initializes with correct architecture."""
@@ -101,19 +101,19 @@ class TestLeWMDecoder:
 
     def test_different_resolutions(self, decoder):
         """Test decoder works with different input resolutions."""
-        for H, W in [(128, 128), (256, 256), (512, 512), (192, 320)]:
-            latent = torch.randn(1, 192, H // 16, W // 16)
+        for h, w in [(128, 128), (256, 256), (512, 512), (192, 320)]:
+            latent = torch.randn(1, 192, h // 16, w // 16)
             output = decoder(latent)
-            assert output.shape == (1, 3, H, W), (
-                f"Failed for resolution {H}x{W}: got {output.shape}"
+            assert output.shape == (1, 3, h, w), (
+                f"Failed for resolution {h}x{w}: got {output.shape}"
             )
 
     def test_different_batch_sizes(self, decoder):
         """Test decoder works with different batch sizes."""
-        for B in [1, 4, 8, 16]:
-            latent = torch.randn(B, 192, 16, 16)
+        for b in [1, 4, 8, 16]:
+            latent = torch.randn(b, 192, 16, 16)
             output = decoder(latent)
-            assert output.shape[0] == B
+            assert output.shape[0] == b
 
     def test_optional_residual_none(self, decoder, sample_latent):
         """Test that residual=None works correctly."""
@@ -132,12 +132,12 @@ class TestLeWMDecoder:
     def test_reconstruction_quality_stub(self, decoder):
         """
         Stub test for reconstruction quality.
-        
+
         Note: Actual PSNR testing requires:
         - Original reference frames
         - Trained encoder-decoder pair
         - Test dataset (e.g., UVG)
-        
+
         Target: PSNR > 42 dB at QP=28 on UVG
         """
         latent = torch.randn(1, 192, 16, 16)

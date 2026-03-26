@@ -22,14 +22,14 @@ class TestLeWMPredictor:
     @pytest.fixture
     def sample_context(self):
         """Create a sample context of latents."""
-        B, C, H, W = 2, 192, 16, 16
-        return [torch.randn(B, C, H, W) for _ in range(4)]
+        b, c, h, w = 2, 192, 16, 16
+        return [torch.randn(b, c, h, w) for _ in range(4)]
 
     @pytest.fixture
     def single_context(self):
         """Create a single latent context."""
-        B, C, H, W = 2, 192, 16, 16
-        return [torch.randn(B, C, H, W)]
+        b, c, h, w = 2, 192, 16, 16
+        return [torch.randn(b, c, h, w)]
 
     def test_predictor_initialization(self, predictor):
         """Test that predictor initializes with correct architecture."""
@@ -60,19 +60,19 @@ class TestLeWMPredictor:
 
     def test_different_context_lengths(self, predictor):
         """Test predictor with different context lengths."""
-        B, C, H, W = 2, 192, 16, 16
+        b, c, h, w = 2, 192, 16, 16
 
         for ctx_len in [1, 2, 3, 4]:
-            context = [torch.randn(B, C, H, W) for _ in range(ctx_len)]
+            context = [torch.randn(b, c, h, w) for _ in range(ctx_len)]
             mean, std = predictor(context)
-            assert mean.shape == (B, C, H, W)
-            assert std.shape == (B, C, H, W)
+            assert mean.shape == (b, c, h, w)
+            assert std.shape == (b, c, h, w)
 
     def test_context_length_limit(self, predictor):
         """Test that context length exceeding limit raises error."""
-        B, C, H, W = 2, 192, 16, 16
-        context = [torch.randn(B, C, H, W) for _ in range(5)]
-        
+        b, c, h, w = 2, 192, 16, 16
+        context = [torch.randn(b, c, h, w) for _ in range(5)]
+
         with pytest.raises(ValueError):
             predictor(context)
 
@@ -117,8 +117,8 @@ class TestLeWMPredictor:
 
     def test_nll_loss_computation(self, predictor, sample_context):
         """Test NLL loss computation."""
-        B, C, H, W = 2, 192, 16, 16
-        target = torch.randn(B, C, H, W)
+        b, c, h, w = 2, 192, 16, 16
+        target = torch.randn(b, c, h, w)
 
         loss = predictor.nll_loss(sample_context, target)
 
@@ -150,21 +150,21 @@ class TestLeWMPredictor:
 
     def test_different_batch_sizes(self, predictor):
         """Test predictor with different batch sizes."""
-        C, H, W = 192, 16, 16
-        for B in [1, 4, 8]:
-            context = [torch.randn(B, C, H, W)]
+        c, h, w = 192, 16, 16
+        for b in [1, 4, 8]:
+            context = [torch.randn(b, c, h, w)]
             mean, std = predictor(context)
-            assert mean.shape[0] == B
-            assert std.shape[0] == B
+            assert mean.shape[0] == b
+            assert std.shape[0] == b
 
     def test_different_resolutions(self, predictor):
         """Test predictor with different spatial resolutions."""
-        B, C = 2, 192
-        for H, W in [(8, 8), (16, 16), (32, 32), (12, 20)]:
-            context = [torch.randn(B, C, H, W)]
+        b, c = 2, 192
+        for h, w in [(8, 8), (16, 16), (32, 32), (12, 20)]:
+            context = [torch.randn(b, c, h, w)]
             mean, std = predictor(context)
-            assert mean.shape == (B, C, H, W)
-            assert std.shape == (B, C, H, W)
+            assert mean.shape == (b, c, h, w)
+            assert std.shape == (b, c, h, w)
 
     def test_eval_mode(self, predictor, sample_context):
         """Test predictor in eval mode."""

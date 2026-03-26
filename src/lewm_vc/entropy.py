@@ -5,11 +5,8 @@ Implements hyperprior-based entropy coding with SIGReg closed-form KL divergence
 Performs rate estimation for latent residuals using Gaussian mixture modeling.
 """
 
-from typing import Tuple
-
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 
 class HyperpriorEntropy(nn.Module):
@@ -54,7 +51,7 @@ class HyperpriorEntropy(nn.Module):
 
         self.entropy_bottleneck = None
 
-    def forward(self, residual: torch.Tensor) -> Tuple[torch.Tensor, dict]:
+    def forward(self, residual: torch.Tensor) -> tuple[torch.Tensor, dict]:
         """
         Forward pass to estimate rate for residual latent.
 
@@ -69,7 +66,7 @@ class HyperpriorEntropy(nn.Module):
 
         mu = params[:, :self.latent_dim, :, :]
         log_sigma = params[:, self.latent_dim:, :, :]
-        sigma = F.softplus(log_sigma) + 1e-5
+        sigma = torch.nn.functional.softplus(log_sigma) + 1e-5
 
         rate = self.gaussian_kl(residual, mu, sigma)
 
@@ -109,7 +106,7 @@ class HyperpriorEntropy(nn.Module):
 
         return kl_bits
 
-    def get_entropy_parameters(self, residual: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    def get_entropy_parameters(self, residual: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         """
         Get μ and σ without computing rate.
 
@@ -126,6 +123,6 @@ class HyperpriorEntropy(nn.Module):
 
         mu = params[:, :self.latent_dim, :, :]
         log_sigma = params[:, self.latent_dim:, :, :]
-        sigma = F.softplus(log_sigma) + 1e-5
+        sigma = torch.nn.functional.softplus(log_sigma) + 1e-5
 
         return mu, sigma

@@ -6,7 +6,6 @@ for training, and hard rounding for inference. Includes QAT wrapper stubs.
 """
 
 from enum import Enum
-from typing import Optional
 
 import torch
 import torch.nn as nn
@@ -41,7 +40,7 @@ class Quantizer(nn.Module):
         num_levels: int = 256,
         mode: QuantMode = QuantMode.TRAINING,
         channelwise: bool = False,
-        qat_wrapper: Optional[str] = None,
+        qat_wrapper: str | None = None,
     ):
         super().__init__()
         self.num_levels = num_levels
@@ -51,7 +50,7 @@ class Quantizer(nn.Module):
 
         self.register_buffer("step_size", torch.tensor(2.0 / num_levels))
 
-        self.qat_model: Optional[nn.Module] = None
+        self.qat_model: nn.Module | None = None
         if qat_wrapper is not None:
             self._setup_qat(qat_wrapper)
 
@@ -111,7 +110,7 @@ class Quantizer(nn.Module):
         x_noisy = x + noise
 
         x_quantized = torch.round(x_noisy / self.step_size) * self.step_size
-        
+
         max_val = self.step_size * (self.num_levels - 1) / 2
         x_quantized = torch.clamp(x_quantized, -max_val, max_val)
 
@@ -130,10 +129,10 @@ class Quantizer(nn.Module):
             Quantized tensor
         """
         x_quantized = torch.round(x / self.step_size) * self.step_size
-        
+
         max_val = self.step_size * (self.num_levels - 1) / 2
         x_quantized = torch.clamp(x_quantized, -max_val, max_val)
-        
+
         return x_quantized
 
     def set_mode(self, mode: QuantMode) -> None:
@@ -205,7 +204,7 @@ class QuantizedTensor:
         self,
         data: torch.Tensor,
         scale: torch.Tensor,
-        zero_point: Optional[torch.Tensor] = None,
+        zero_point: torch.Tensor | None = None,
     ):
         """
         Initialize quantized tensor container.

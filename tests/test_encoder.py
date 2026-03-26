@@ -27,8 +27,8 @@ class TestLeWMEncoder:
     @pytest.fixture
     def sample_input(self):
         """Create a sample input tensor for testing."""
-        B, C, H, W = 2, 3, 256, 256
-        return torch.rand(B, C, H, W)
+        b, c, h, w = 2, 3, 256, 256
+        return torch.rand(b, c, h, w)
 
     def test_encoder_initialization(self, encoder):
         """Test that encoder initializes with correct architecture."""
@@ -49,20 +49,20 @@ class TestLeWMEncoder:
 
     def test_different_resolutions(self, encoder):
         """Test encoder works with different input resolutions."""
-        for H, W in [(128, 128), (256, 256), (512, 512), (192, 320)]:
-            x = torch.rand(1, 3, H, W)
+        for h, w in [(128, 128), (256, 256), (512, 512), (192, 320)]:
+            x = torch.rand(1, 3, h, w)
             output = encoder(x)
-            expected_shape = (1, 192, H // 16, W // 16)
+            expected_shape = (1, 192, h // 16, w // 16)
             assert output.shape == expected_shape, (
-                f"Failed for resolution {H}x{W}: got {output.shape}"
+                f"Failed for resolution {h}x{w}: got {output.shape}"
             )
 
     def test_different_batch_sizes(self, encoder):
         """Test encoder works with different batch sizes."""
-        for B in [1, 4, 8]:
-            x = torch.rand(B, 3, 256, 256)
+        for b in [1, 4, 8]:
+            x = torch.rand(b, 3, 256, 256)
             output = encoder(x)
-            assert output.shape[0] == B
+            assert output.shape[0] == b
             assert output.shape[1] == 192
             assert output.shape[2] == 16
             assert output.shape[3] == 16
@@ -102,7 +102,7 @@ class TestLeWMEncoder:
     def test_round_trip_quality_stub(self, encoder, sample_input):
         """
         Stub test for round-trip quality.
-        
+
         Note: Actual quality testing requires:
         - Trained encoder-decoder pair
         - Test dataset
@@ -205,8 +205,8 @@ class TestTransformerEncoderLayer:
 
     def test_forward(self, layer):
         """Test basic forward pass."""
-        B, N, D = 2, 16, 192
-        x = torch.randn(B, N, D)
+        b, n, d = 2, 16, 192
+        x = torch.randn(b, n, d)
         out = layer(x)
         assert out.shape == x.shape
 
@@ -226,7 +226,7 @@ class TestTransformerEncoderLayer:
 
     def test_different_seq_lengths(self, layer):
         """Test with different sequence lengths."""
-        for N in [1, 8, 32, 64]:
-            x = torch.randn(1, N, 192)
+        for n in [1, 8, 32, 64]:
+            x = torch.randn(1, n, 192)
             out = layer(x)
-            assert out.shape == (1, N, 192)
+            assert out.shape == (1, n, 192)

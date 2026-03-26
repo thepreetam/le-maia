@@ -6,8 +6,6 @@ with CRF table lookup for ABR ladder compliance.
 Target: bitrate ±3% on ABR ladder per modules.md line 207.
 """
 
-from typing import Optional
-
 import torch
 import torch.nn as nn
 
@@ -61,7 +59,7 @@ class RateController(nn.Module):
         self,
         latent_dim: int = 192,
         hidden_dim: int = 256,
-        crf_table: Optional[dict] = None,
+        crf_table: dict | None = None,
         enable_mlp: bool = True,
     ):
         super().__init__()
@@ -167,9 +165,7 @@ class RateController(nn.Module):
             complexity = 0.3 * mean + 0.3 * std + 0.2 * energy + 0.2 * sparsity
             return complexity.clamp(0, 1).squeeze(-1).squeeze(-1)
 
-        B = latent.shape[0]
-
-        flat = latent.flatten(1)
+        b = latent.shape[0]
 
         mean = latent.mean(dim=[1, 2, 3])
         std = latent.std(dim=[1, 2, 3])
@@ -181,7 +177,7 @@ class RateController(nn.Module):
 
         if features.shape[1] < self.latent_dim * 4:
             padding = torch.zeros(
-                B, self.latent_dim * 4 - features.shape[1],
+                b, self.latent_dim * 4 - features.shape[1],
                 device=features.device
             )
             features = torch.cat([features, padding], dim=1)
@@ -280,7 +276,7 @@ class CRFSchedule:
         self.max_crf = max_crf
         self.scd_threshold = scd_threshold
 
-        self.prev_frame_complexity: Optional[float] = None
+        self.prev_frame_complexity: float | None = None
 
     def compute_crf(
         self,

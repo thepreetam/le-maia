@@ -6,8 +6,6 @@ featuring 4-layer ConvTranspose upsampling with residual blocks
 and a learned post-filter trained with LPIPS loss.
 """
 
-from typing import Optional
-
 import torch
 import torch.nn as nn
 
@@ -78,7 +76,7 @@ class LeWMDecoder(nn.Module):
     def forward(
         self,
         quant_latent: torch.Tensor,
-        residual: Optional[torch.Tensor] = None
+        residual: torch.Tensor | None = None
     ) -> torch.Tensor:
         """
         Forward pass of the decoder network.

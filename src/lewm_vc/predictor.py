@@ -6,8 +6,6 @@ Predicts future latents from past latents using a transformer encoder,
 outputting isotropic Gaussian parameters (mean and std) per SIGReg.
 """
 
-from typing import List
-
 import torch
 import torch.nn as nn
 
@@ -82,7 +80,7 @@ class LeWMPredictor(nn.Module):
 
     def forward(
         self,
-        context: List[torch.Tensor]
+        context: list[torch.Tensor]
     ) -> tuple[torch.Tensor, torch.Tensor]:
         """
         Forward pass of the predictor network.
@@ -100,8 +98,8 @@ class LeWMPredictor(nn.Module):
         if len(context) > self.context_len:
             raise ValueError(f"Context length {len(context)} exceeds maximum {self.context_len}")
 
-        B = context[0].shape[0]
-        H, W = context[0].shape[2], context[0].shape[3]
+        b = context[0].shape[0]
+        h, w = context[0].shape[2], context[0].shape[3]
 
         projected = [self.input_proj(latent) for latent in context]
 
@@ -113,7 +111,7 @@ class LeWMPredictor(nn.Module):
         temporal_input = torch.stack(pooled, dim=1)
 
         if temporal_input.shape[1] < self.context_len:
-            padding = torch.zeros(B, self.context_len - temporal_input.shape[1], self.hidden_dim, device=temporal_input.device)
+            padding = torch.zeros(b, self.context_len - temporal_input.shape[1], self.hidden_dim, device=temporal_input.device)
             temporal_input = torch.cat([temporal_input, padding], dim=1)
 
         temporal_input = temporal_input + self.frame_tokens
@@ -127,7 +125,7 @@ class LeWMPredictor(nn.Module):
 
         last_frame_proj = projected[last_frame_idx]
 
-        combined = torch.cat([last_frame_proj, last_temporal.unsqueeze(-1).unsqueeze(-1).expand(-1, -1, H, W)], dim=1)
+        combined = torch.cat([last_frame_proj, last_temporal.unsqueeze(-1).unsqueeze(-1).expand(-1, -1, h, w)], dim=1)
 
         spatial_features = self.spatial_conv(combined)
 
@@ -140,7 +138,7 @@ class LeWMPredictor(nn.Module):
 
     def predict(
         self,
-        context: List[torch.Tensor],
+        context: list[torch.Tensor],
         sample: bool = True
     ) -> torch.Tensor:
         """
@@ -165,7 +163,7 @@ class LeWMPredictor(nn.Module):
 
     def nll_loss(
         self,
-        context: List[torch.Tensor],
+        context: list[torch.Tensor],
         target: torch.Tensor
     ) -> torch.Tensor:
         """

@@ -6,7 +6,6 @@ Supports 7 NAL unit types per specification.
 """
 
 from enum import IntEnum
-from typing import Optional
 
 import numpy as np
 import torch
@@ -180,7 +179,7 @@ class BitstreamWriter:
 
         return header
 
-    def _serialize_latent(self, latent: Optional[torch.Tensor]) -> bytes:
+    def _serialize_latent(self, latent: torch.Tensor | None) -> bytes:
         """
         Serialize latent tensor using arithmetic coding stub.
 
@@ -199,7 +198,7 @@ class BitstreamWriter:
 
         return self._arithmetic_encode_stub(latent_np)
 
-    def _serialize_residual(self, residual: Optional[torch.Tensor]) -> bytes:
+    def _serialize_residual(self, residual: torch.Tensor | None) -> bytes:
         """
         Serialize residual tensor.
 

@@ -75,8 +75,8 @@ class TestFullPipeline:
 
         resolutions = [(128, 128), (256, 256), (512, 512), (192, 320)]
 
-        for H, W in resolutions:
-            frames = torch.rand(1, 3, H, W)
+        for h, w in resolutions:
+            frames = torch.rand(1, 3, h, w)
 
             with torch.no_grad():
                 latent = encoder(frames)

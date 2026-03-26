@@ -203,7 +203,7 @@ class TestRoundTrip:
         decoded_pps = reader.read_picture_header(pps_bytes)
         assert decoded_pps["nal_type"] == NALUnitType.PPS
 
-        for i, frame_bytes in enumerate(frames):
+        for _i, frame_bytes in enumerate(frames):
             decoded_frame = reader.read_frame(frame_bytes)
             assert "nal_type" in decoded_frame
 

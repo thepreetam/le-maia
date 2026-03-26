@@ -100,13 +100,13 @@ class LeWMEncoder(nn.Module):
             latent: Encoded latent [B, latent_dim, H//16, W//16]
             surprise: (optional) Physics implausibility [B, 1]
         """
-        B, C, H, W = x.shape
+        b, c, h, w = x.shape
 
         x = self.patch_embed(x)
 
         x_flat = x.flatten(2).permute(0, 2, 1)
 
-        cls_tokens = self.cls_token.expand(B, -1, -1)
+        cls_tokens = self.cls_token.expand(b, -1, -1)
         x_with_cls = torch.cat([cls_tokens, x_flat], dim=1)
 
         x_with_cls = x_with_cls + self.pos_embed
@@ -119,7 +119,7 @@ class LeWMEncoder(nn.Module):
         cls_output = x_with_cls[:, 0]
         patch_output = x_with_cls[:, 1:]
 
-        patch_output = patch_output.permute(0, 2, 1).reshape(B, self.hidden_dim, H // self.patch_size, W // self.patch_size)
+        patch_output = patch_output.permute(0, 2, 1).reshape(b, self.hidden_dim, h // self.patch_size, w // self.patch_size)
 
         latent = self.latent_proj(patch_output)
 
