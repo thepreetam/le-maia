@@ -217,6 +217,140 @@ Build clean interfaces for:
 
 ---
 
+## 7. Acquisition Positioning & Outreach (Months 3–9)
+
+**Goal**: Turn benchmarks + JEPA foundation into a compelling, high-valuation asset.
+
+### Market timing
+
+- InterDigital acquired Deep Render (AI video codec startup) October 2025
+- GTT Group divesting AI-assisted video compression patents
+- High interest in AI video/world-model (Runway, Luma AI raising hundreds of millions)
+- Acquirers seeking: compression, temporal prediction, semantic understanding
+
+### Polish the acquisition package (4–6 weeks)
+
+#### Confidential teaser / one-pager
+
+**Core innovation:**
+- First JEPA-based end-to-end video codec
+- Built on stable LeWM world model foundation
+- SIGReg Gaussian entropy modeling
+- Semantic surprise detection for physics-aware quality/rate control
+- Perceptual LPIPS post-filter
+
+**Performance edge:**
+- BD-rate savings vs. HEVC/AV1
+- Perceptual quality gains
+- Runtime, memory, FFmpeg integration metrics
+- Domain-specific wins (high-motion, surveillance)
+
+**Defensibility:**
+- Provisional patents filed
+- Clean integration path
+- Team expertise
+
+#### Data room preparation (under NDA)
+
+- Side-by-side demo videos/clips
+- Full RD curves + raw logs
+- Ablation studies (JEPA predictor vs. traditional motion compensation)
+- Integration examples (FFmpeg wrapper)
+- High-level architecture overview (no source)
+
+#### Valuation anchors
+
+- Reference Deep Render / InterDigital deal
+- Factor in: LeWM timing advantage, semantic features, production-ready elements
+- Early-stage neural codec IP commands strong multiples with clear gains + moat
+
+### Identify and prioritize targets
+
+#### Primary acquirers
+
+| Tier | Company Type | Examples |
+|------|-------------|----------|
+| 1 | Video IP/licensing leaders | InterDigital, Dolby, Adeia |
+| 2 | Big Tech with video/cloud | Google, Meta, Amazon, Netflix, Apple, ByteDance |
+| 3 | Hardware/edge | Qualcomm, Nvidia, Intel, ARM |
+| 4 | World-model/robotics | Embodied AI companies |
+
+#### Approach strategy
+
+- Start with 2–3 "warm" fits (already investing in neural codecs or world models)
+- Use intermediaries if needed: investment bankers, patent brokers
+- Avoid public leaks
+
+### Controlled outreach & due diligence
+
+**NDA-first approach:**
+- Warm connections, corporate development teams, or conferences
+- Emphasize "exclusive evaluation opportunity"
+- Offer virtual/in-person black-box evaluations on their content
+
+**Demo targets:**
+- "20–30% effective bitrate reduction on 4K streaming test set"
+- Better perceptual scores at equivalent bitrate
+
+**Diligence readiness:**
+- Team bios
+- IP status summary
+- Scalability roadmap
+- Risk/mitigation notes
+
+**Timeline:**
+| Milestone | Target |
+|-----------|--------|
+| Initial meetings | 2–4 months |
+| Term sheets | 6–9 months |
+
+### Parallel de-risking
+
+- [ ] Continue internal pilots (surveillance, cloud storage ROI stories)
+- [ ] Monitor MPEG NNVC and Beyond-VVC efforts quietly
+- [ ] Consider key hires: codec optimization, business development
+- [ ] Engage advisors with AI acquisition experience
+- [ ] Backup: licensing deals or strategic partnerships
+
+### Key risks & mitigation
+
+| Risk | Mitigation |
+|------|------------|
+| Competition | JEPA + semantic surprise combo remains differentiated |
+| Timing | Move while LeWM momentum and deals are fresh |
+| Valuation pressure | Strong private data + patents help |
+
+---
+
+## Target Acquirer Profiles
+
+### InterDigital
+- Already acquiring AI codec tech (Deep Render)
+- Leading beyond VVC/HEVC positioning
+- Warm fit for video IP licensing model
+
+### Dolby
+- Heavy in compression licensing
+- Interest in neural/hybrid approaches
+- Strong monetization infrastructure
+
+### Google/Meta/Netflix
+- Internal video platforms need cost savings
+- World-model interest (especially Meta)
+- Can pay premium for clear gains
+
+### Qualcomm/Nvidia/ARM
+- Edge/mobile deployment value
+- Tensor core optimization synergies
+- Hardware vendor interest in codec IP
+
+### Robotics/Embodied AI
+- JEPA predictor aligns with physics-aware modeling
+- Surprise detection for autonomous systems
+- Growing investment in world models
+
+---
+
 ## 6. Longer-term Technical Roadmap
 
 ### Scale and enhance
