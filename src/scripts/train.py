@@ -18,7 +18,13 @@ import torch.nn as nn
 import torch.nn.functional
 import yaml
 from torch.utils.data import DataLoader, Dataset
-from torch.utils.tensorboard import SummaryWriter
+
+try:
+    from torch.utils.tensorboard import SummaryWriter
+    HAS_TENSORBOARD = True
+except ImportError:
+    HAS_TENSORBOARD = False
+    SummaryWriter = None
 
 
 class TrainingPhase:
@@ -180,8 +186,8 @@ class LeWMTrainer:
             "rate_controller": rate_controller,
         }
 
-        self.writer: SummaryWriter | None = None
-        if config.get("logging", {}).get("tensorboard", False):
+        self.writer = None
+        if HAS_TENSORBOARD and config.get("logging", {}).get("tensorboard", False):
             log_dir = config.get("logging", {}).get("log_dir", "runs")
             self.writer = SummaryWriter(log_dir)
 
