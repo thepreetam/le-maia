@@ -360,6 +360,7 @@ class LeWMVideoCodec:
         gop_size: int = 16,
         codebook_size: int = 256,
         checkpoint_path: str = None,
+        use_trained: bool = True,
     ):
         from .working_decoder import LeWMDecoder
 
@@ -368,16 +369,28 @@ class LeWMVideoCodec:
             gop_size=gop_size,
             codebook_size=codebook_size,
         )
+        self.decoder = LeWMDecoder(latent_dim=latent_dim)
+
+        if use_trained:
+            default_paths = [
+                "checkpoints/autoencoder_final.pt",
+                "checkpoints/autoencoder_e100.pt",
+                "../checkpoints/autoencoder_final.pt",
+            ]
+            for path in default_paths:
+                if Path(path).exists():
+                    checkpoint_path = path
+                    break
 
         if checkpoint_path and Path(checkpoint_path).exists():
-            checkpoint = torch.load(checkpoint_path)
-            self.decoder = LeWMDecoder(latent_dim=latent_dim)
-            if 'decoder' in checkpoint:
-                self.decoder.load_state_dict(checkpoint['decoder'])
-            else:
+            checkpoint = torch.load(checkpoint_path, map_location=torch.device("cpu"))
+            if "encoder" in checkpoint:
+                self.encoder.encoder.load_state_dict(checkpoint["encoder"])
+            if "decoder" in checkpoint:
+                self.decoder.load_state_dict(checkpoint["decoder"])
+            elif "proj" in checkpoint:
                 self.decoder.load_state_dict(checkpoint)
-        else:
-            self.decoder = LeWMDecoder(latent_dim=latent_dim)
+
         self.decoder.eval()
 
     def encode_video(
