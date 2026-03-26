@@ -351,6 +351,140 @@ Build clean interfaces for:
 
 ---
 
+## Domain Focus Priorities
+
+### 1. Next-Generation Video Compression (Core Fit)
+
+**Focus**: AI/hybrid codecs with better perceptual quality or bitrate savings vs. HEVC/AV1/VVC
+
+**Why it matches:**
+- Semantic surprise detection enables physics-aware bit allocation
+- Lower quality on predictable frames, higher on anomalous events
+- Production hooks: FFmpeg plugin, rate control
+
+**Use cases:**
+- Streaming platforms
+- Cloud video storage
+- Broadcast
+- Mobile delivery
+
+**Standards context:**
+- MPEG/JVET exploring NNVC and Beyond-VVC (H.267)
+- InterDigital acquiring Deep Render signals IP-heavy players betting on AI-native compression
+
+### 2. Embodied AI / Robotics & World Models
+
+**Focus**: JEPA-style predictors for temporal forecasting, physics simulation, surprise handling
+
+**Why it matches:**
+- 8-layer transformer predictor + semantic surprise detection
+- Action anticipation, long-horizon planning
+- Robustness to physics-implausible events
+- V-JEPA 2 alignment (zero-shot robot control)
+
+**Use cases:**
+- Robotic manipulation
+- Autonomous drones/vehicles
+- Simulation for training
+
+### 3. Surveillance / Security / Edge Video Analytics
+
+**Focus**: Physics-aware quality assurance, dynamic rate allocation for anomalous events
+
+**Why it matches:**
+- Surprise detection auto-optimizes bitrate
+- Latent-space analysis without full decode
+- Flag anomalies in security footage
+
+**Use cases:**
+- Drone footage
+- Security cameras
+- Low-bandwidth remote monitoring
+
+### 4. Cloud / Streaming Optimization
+
+**Focus**: Perceptual delivery with LPIPS-trained post-filter + learned λ adaptation
+
+**Why it matches:**
+- User-perceived quality focus
+- Storage/transmission cost reduction
+- Clean FFmpeg integration path
+
+---
+
+## Tiered Acquirer Strategy
+
+### Tier 1: Best Fit (High Likelihood of Interest)
+
+| Company | Profile | Approach Angle |
+|---------|---------|----------------|
+| InterDigital | AI-native push, post-VVC positioning | BD-rate gains, standards complementarity |
+| Dolby | Compression licensing heavyweight | Perceptual quality wins |
+| Adeia | Patent monetization | Novel IP in learned compression |
+| Nokia | Video IP portfolio | JEPA novelty for standards |
+| Sisvel | Patent pools | Pure IP play |
+
+### Tier 2: Strong Strategic Buyers
+
+| Company | Profile | Approach Angle |
+|---------|---------|----------------|
+| Google/YouTube | Massive video infrastructure | Direct compression savings |
+| Meta | V-JEPA investment, world models | Latent-space advantages |
+| Amazon/AWS | Prime Video, cloud storage | ROI on bandwidth costs |
+| Netflix | Video quality optimization | Perceptual quality focus |
+| ByteDance/TikTok | Video-heavy platform | Scale + efficiency gains |
+| Qualcomm | Edge/mobile inference | FPS/memory on mobile |
+| Nvidia | Tensor core optimization | Hardware synergy |
+| ARM | Mobile silicon | Edge deployment value |
+
+### Tier 3: Emerging Fits
+
+| Company | Profile | Approach Angle |
+|---------|---------|----------------|
+| Robotics/Embodied AI | Physical agent simulation | Surprise detection for robustness |
+| Patent brokers | GTT-style divestitures | Pure IP liquidity |
+
+---
+
+## Positioning by Profile
+
+### For IP/Licensing Companies
+- Stress patentable novelty (JEPA + surprise in codec context)
+- Potential SEP contribution to future standards
+- Patent portfolio strengthening
+
+### For Big Tech/Platforms
+- Highlight private benchmark wins on their content types
+- High-motion streaming, drone video examples
+- Integration ease
+
+### For Hardware
+- Provide FPS/memory numbers on target devices
+- Quantization-aware training details
+- Tensor core optimization paths
+
+---
+
+## Outreach Strategy
+
+### Initial outreach (2–4 months)
+1. Select 2–3 Tier 1 targets (warm fits)
+2. Use: corporate development, advisors, intermediaries
+3. Lead with NDA + teaser
+
+### Demo package
+- "20–30% effective bitrate reduction on 4K streaming"
+- Better perceptual scores at equivalent bitrate
+- Side-by-side clips under evaluation
+
+### Diligence readiness
+- Team bios
+- IP status summary
+- Scalability roadmap
+- Clean RD curve data
+
+---
+
 ## 6. Longer-term Technical Roadmap
 
 ### Scale and enhance
