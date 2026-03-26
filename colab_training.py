@@ -4,8 +4,9 @@
 # Install dependencies
 !pip install torch torchvision numpy opencv-python tqdm
 
-# Clone or upload the lewm-vc repo
-# If you haven't, upload the src/lewm_vc directory to Colab
+# Clone the repo
+!git clone https://github.com/thepreetam/le-maia.git
+%cd le-maia
 
 import sys
 sys.path.insert(0, 'src')
