@@ -1,99 +1,35 @@
 # LeWM-VC Roadmap
 
-Prioritized next-step roadmap for LeWM-VC, a JEPA-based video codec with stable SIGReg training.
-
 **Goal**: Acquisition positioning — shift from prototype to acquirable asset.
+
+**Reference**: Deep Render / InterDigital (Oct 30, 2025) — cash tuck-in focused on AI talent, patents, and accelerating "AI-native" video research. Bulk of value in patents/goodwill. LeWM-VC positions as the logical next step: world-model priors + semantic intelligence on learned compression.
 
 ---
 
 ## Current Status
 
-- Working prototype with ViT encoder, temporal predictor, quantization, entropy coding, NAL bitstream
+- Working prototype: ViT encoder, temporal predictor, quantization, entropy coding, NAL bitstream
 - FFmpeg plugin (C wrapper) implemented
-- 159 tests passing
-- CI/CD configured
+- 159 tests passing, CI/CD configured
 
 ---
 
-## Critical Shift: Commercial Proof Over Technical Storytelling
+## Immediate Priorities (This Week – Week 2)
 
-Acquirers (especially InterDigital-style buyers) care about:
-- **Quantified ROI**: Real bitrate savings, real storage reductions
-- **Production hardening**: Does it actually work in deployment?
-- **Risk signals**: Where does it break? What are the failure modes?
+### 1. Surveillance ROI Benchmark + Demo (Highest Impact)
 
-The JEPA + semantic surprise story is compelling, but it's just narrative until backed by data.
+**This is the centerpiece of the acquisition narrative.**
 
----
+#### Surveillance Footage Test
 
-## Proprietary IP Strategy
+- [ ] Acquire 100+ hours of diverse surveillance footage
+  - Indoor/outdoor, day/night, low-motion vs. events
+  - Public datasets or rights-cleared internal clips only
+  - **Prepare clean data provenance statement for data room**
+- [ ] Encode with surprise-gating ON vs. OFF
+- [ ] Compare against strong anchors: x265 HEVC, SVT-AV1
 
-**This roadmap assumes LeWM-VC is treated as proprietary IP** — internal tool, startup asset, licensing candidate, or acquisition bait. Focus on defensibility, performance proof, and controlled demonstration rather than public visibility.
-
-### Key Differentiators
-
-| Feature | Why It Matters | Evidence Needed |
-|---------|---------------|-----------------|
-| JEPA World-Model Foundation | Stable pixel-to-latent prediction via SIGReg | Ablation vs. optical flow |
-| Semantic Surprise Detection | Physics-implausibility gating for quality/rate | ROI on real surveillance footage |
-| SIGReg Gaussian Entropy | Near-ideal entropy prior, minimal rate overhead | Rate overhead < 2% |
-| LPIPS Perceptual Post-Filter | Superior subjective quality | VMAF/LPIPS scores vs. baselines |
-| Production FFmpeg Integration | Clean deployment path | Thread-safe, ARM builds, fuzz-tested |
-
-### Timing Advantage
-
-- InterDigital acquired Deep Render (Oct 2025) for AI-native codec tech
-- MPEG/JVET actively exploring NNVC and Beyond-VVC (H.267)
-- World-model funding surging ($1B+ in early 2026)
-- LeWM-VC positioned as "next logical acquisition" after Deep Render
-
----
-
-## Phase 0: Production Hardening (This Week)
-
-**Before any NDA demo, FFmpeg plugin must be production-ready.**
-
-### FFmpeg Plugin Requirements (Non-Negotiable)
-
-- [ ] Thread-safety validation
-- [ ] Seek/timestamp handling correctness
-- [ ] Frame drop handling
-- [ ] Corrupted bitstream resilience (fuzzing)
-- [ ] ARM builds (Apple Silicon, Raspberry Pi, mobile SoC targets)
-- [ ] Worst-case decode latency measurement
-- [ ] CPU-only performance baseline
-
-### Quick FFmpeg Checklist
-
-```
-[ ] Thread-safety: Multiple parallel encodes/decodes
-[ ] Seek test: FFmpeg seeking with -ss flag
-[ ] Fuzzing: Inject random corruption, verify graceful failure
-[ ] ARM64: Build on Apple Silicon M-series
-[ ] ARM32: Build on Raspberry Pi OS
-[ ] Latency: Measure p99 decode time per frame
-[ ] CPU-only: Verify no GPU required for decode
-```
-
----
-
-## Phase 1: Quantified Surprise ROI (Week 1)
-
-**Top priority experiment — turn the most distinctive feature from claim to evidence.**
-
-### Surveillance Benchmark
-
-- [ ] Acquire 100+ hours of real surveillance footage
-  - Diverse: indoor/outdoor, day/night, low-motion vs. events
-  - Sources: internal, licensed, or public datasets (if permissible)
-- [ ] Encode with/without surprise-gating
-- [ ] Measure:
-  - Actual storage/bandwidth savings on "normal" segments
-  - Quality preservation on "surprise" segments
-  - Compute overhead for surprise detection
-- [ ] Document fallback modes for latency-critical paths
-
-### ROI Evidence Template
+#### Metrics to Capture
 
 ```
 Surveillance Footage Test Results:
@@ -103,24 +39,46 @@ Surveillance Footage Test Results:
 - Bitrate savings: XX% on normal segments
 - Quality delta: VMAF/LPIPS scores
 - Compute overhead: XX ms per frame for surprise detection
+- Latency impact: XX ms added
 ```
 
-### Demo Video (2 minutes)
+#### Demo Video (2 minutes)
 
-- [ ] Side-by-side: original vs. LeWM-VC at equivalent bitrate
-- [ ] Surprise overlay: visual flagging of gating decisions
-- [ ] Include both "normal" and "surprise" segments
-- [ ] No audio, clean cuts
+- [ ] Split-screen: Original | LeWM-VC with gating (surprise overlay) | LeWM-VC without gating
+- [ ] Make the trade-off instantly visible to non-technical CD teams
+- [ ] Clean cuts, no audio
 
 ---
 
-## Phase 2: JEPA Advantage Ablation (Week 1–2)
+### 2. Production Hardening (Parallel)
 
-**Prove the predictor actually helps — or adjust the narrative.**
+**FFmpeg C wrapper must be production-ready before NDA demos.**
 
-### Ablation Study
+#### FFmpeg Checklist
 
-Compare your 8-layer SIGReg predictor against:
+- [ ] **Thread-safety**: Multiple parallel encodes/decodes
+- [ ] **Seek/timestamp**: Test with `-ss` flag
+- [ ] **Frame drops**: Verify graceful handling
+- [ ] **Fuzzing**: Inject random corruption, verify graceful failure
+- [ ] **ARM64**: Build on Apple Silicon M-series
+- [ ] **ARM32**: Build on Raspberry Pi OS
+- [ ] **Mobile SoC**: Representative target (Qualcomm, MediaTek)
+- [ ] **Latency**: Measure p99 decode time per frame
+- [ ] **CPU-only fallback**: Verify no GPU required for decode
+
+#### Hardware Mapping Notes
+
+- [ ] ONNX export path documented (even if prototype)
+- [ ] Tensor Core / NPU-friendly layer notes
+- Shows ecosystem awareness for Qualcomm/Nvidia conversations
+
+---
+
+### 3. JEPA Ablation (One Week)
+
+**Decisive test — adjust narrative based on results.**
+
+Compare 8-layer SIGReg predictor against:
 
 | Baseline | What to Test |
 |----------|--------------|
@@ -128,221 +86,197 @@ Compare your 8-layer SIGReg predictor against:
 | Temporal VAE conditioning | Simple temporal latent conditioning |
 | Basic transformer motion | Transformer without SIGReg |
 
-### Metrics
+**Metrics**:
+- Rate-distortion (PSNR, MS-SSIM, VMAF)
+- Long-horizon stability (30+ frame GOPs)
+- Surprise detection synergy
 
-- Rate-distortion curves (PSNR, MS-SSIM, VMAF)
-- Long-horizon prediction stability (30+ frame GOPs)
-- Surprise detection synergy (does SIGReg improve anomaly detection?)
-- Failure modes (where does each approach break?)
-
-### Decision Gate
-
-If JEPA predictor doesn't win clearly:
-- De-emphasize "JEPA" in teaser
-- Lead with: "Predictive world-model latent coding with semantic rate allocation"
+**Decision**:
+- If wins clearly → Keep "stable world-model latent coding" framing
+- If not → Reframe around SIGReg training stability + semantic surprise as core moat
 
 ---
 
-## Phase 3: Patent Filings (Week 2–3)
+### 4. Provisional Patents (Parallel, Week 1)
 
-**File provisional patents NOW — before any public discussion.**
+**File NOW — before any public discussion.**
 
-### Provisional Patent Claims
+#### Claims to File
 
-1. **Core**: JEPA-based latent video coding with SIGReg entropy modeling
-2. **Semantic**: Semantic surprise-aware rate allocation in learned video compression
-3. **Integration**: NAL-unit integration with learned world-model latents
-4. **Format**: Specific NAL serialization format extensions
+1. **Semantic surprise-driven latent-space rate allocation**
+2. **NAL extensions with world-model priors**
+3. **Overall JEPA/SIGReg + perceptual post-filter pipeline**
 
-### Attach to Filing
+#### Attach to Filing
 
 - Early RD curves
 - Ablation results
 - Surveillance savings data
 
-This strengthens arguments vs. prior art in neural codecs.
+This strengthens prior-art arguments and enables "patent pending" in teaser.
 
 ---
 
-## Phase 4: Confidential Teaser & Data Room (Week 3–4)
+## Week 3–6: Clean NDA Package & Outreach
 
-### One-Pager Structure
+### One-Pager Hook
 
-**Headline**: AI-Native Video Compression for Edge Analytics
+> "AI-native edge video compression with built-in anomaly awareness — semantic surprise detection delivers measurable bitrate savings on predictable surveillance scenes while preserving quality for events."
 
-**1. Problem (1 sentence)**
-> Edge video analytics needs intelligent compression that saves bits on predictable scenes while preserving quality where it matters.
+**Lead with**:
+- One clear graph: surveillance bitrate savings vs. H.265
+- Split-screen demo link (under NDA)
 
-**2. Solution (2–3 sentences)**
-> LeWM-VC is the first JEPA-world-model video codec with built-in semantic intelligence. Semantic surprise detection automatically identifies physics-implausible events and allocates bits accordingly. Built on stable SIGReg training with production FFmpeg integration.
-
-**3. Differentiators (bullets)**
-- Semantic surprise detection for physics-aware bit allocation
-- Stable SIGReg training — no EMA teacher, no collapse
-- Production-ready: FFmpeg plugin, rate control, NAL bitstream
-- LPIPS-trained perceptual post-filter
-
-**4. Proof Points (private data)**
-- XX% bitrate savings on surveillance footage (normal segments)
-- XX% bitrate savings on drone footage (high-motion)
-- XX fps decode on ARM Cortex-A series
-- [Attach: full RD curves, ablation results, demo video]
-
-**5. Team & IP**
-- [Team bios]
-- [Provisional patents filed]
-- [Timeline to production-ready]
-
-### Data Room Contents (Under NDA)
+### Data Room Checklist
 
 | Category | Contents |
 |----------|----------|
-| Demos | 2-min surveillance demo, side-by-side clips |
+| Demo | 2-min surveillance split-screen video |
 | RD Data | Full curves vs. H.264/H.265/AV1, raw logs |
 | Ablations | JEPA predictor vs. baselines |
-| Technical | High-level architecture (no source) |
-| IP | Patent claims, filing status |
-| Team | Bios, advisor list |
+| Hardware | FFmpeg metrics (ARM, latency, fuzz results) |
+| Technical | High-level architecture (NO source) |
+| Data | Training data provenance statement |
+| IP | Patent claims, filing status ("patent pending") |
+| Team | Bios, advisor list, integration willingness |
+
+### NDA Discipline
+
+- Use your own standard NDA first
+- **Black-box API option**: Upload clip → compressed output
+- Maintains control, enables early evaluations
+
+### Outreach Sequence
+
+1. **InterDigital** — warmest strategic fit post-Deep Render
+2. **Qualcomm** — NPU/hardware edge synergy
+3. **Defense/Drone** — surveillance ROI story resonates
+
+Use advisor intros where available.
 
 ---
 
-## Phase 5: NDA Outreach (Week 4–6)
-
-### Target Sequence (by fit + receptivity)
-
-| Priority | Target | Angle |
-|----------|--------|-------|
-| 1 | **InterDigital** | Post-Deep Render, AI-native codec focus |
-| 2 | **Qualcomm** | Edge/hardware synergy |
-| 3 | **Defense/Drone player** | Surveillance ROI story |
-| 4 | Meta | World-model synergy |
-
-### Outreach Approach
-
-1. **NDA-first**: Never send technical details without NDA
-2. **Exclusive framing**: "Exclusive evaluation opportunity"
-3. **Black-box demos**: Let them run on their content
-4. **Quantified claims**: Lead with numbers, not narrative
-
-### Demo Targets
-
-- "30–50% effective bitrate reduction on normal surveillance footage"
-- "Better perceptual quality at equivalent bitrate vs. H.265"
-- "Faster-than-real-time decode on mobile ARM"
-
----
-
-## Risk Mitigation for Acquirers
+## Risk Mitigation (Acquirer Lens)
 
 | Risk | Acquirer Concern | Mitigation |
 |------|------------------|------------|
-| Obsolescence | NNVC track advancing, standards competition | Frame as complementary (long-term prediction, semantic features) |
-| Training dependency | What training data was used? | Document internally, avoid copyrighted content |
-| Hardware lock-in | Does it only run on NVIDIA? | FFmpeg plugin, CPU fallback, ARM builds |
-| Team depth | Can you scale? | Line up codec-industry advisor (MPEG/JVET experience) |
-| Quantization instability | Does INT8 break quality? | Document QAT procedures, measure quality delta |
+| **Standards pressure** | NNVC / Beyond-VVC (H.267) targeting 2027 | Position as complementary: predictive latent + semantic for edge/analytics that standards may lag on. Patents gain value if similar ideas appear in NNVC. |
+| **Hardware questions** | Does it only run on NVIDIA? | ARM builds + CPU fallback documented; graceful degradation shown; NPU mapping notes included. |
+| **Training data** | Rights-cleared? | Rights-cleared surveillance footage only; explicit provenance statement. |
+| **Team / scalability** | Can you scale? | Highlight integration willingness; line up MPEG/JVET-experienced advisor before outreach. |
+| **Valuation realism** | Inflated claims? | Anchor to Deep Render (talent + patents) but differentiate with harder surveillance-specific proof and production hooks. Use-case-relative gains (strongest on low-motion edge) instead of blanket claims. |
 
 ---
 
-## Exit Gate: Month 2–3 Decision
+## Exit Timing & Decision Gate
 
-**Define your minimum number now.**
+### Target Timeline
 
-| Signal | Action |
-|--------|--------|
-| Strong surveillance data + hardened plugin + positive NDA feedback | Accelerate outreach |
-| Weak data or plugin still fragile | Reassess: build more vs. fast exit |
+| Milestone | Target |
+|-----------|--------|
+| Initial NDA conversations | End of Month 2 |
+| Term sheets | Month 3–4 |
+| Close | Month 4–6 |
 
-**The NNVC window is not infinite** — move while momentum is fresh.
+### Hard Gate: Month 3
 
----
+**Define your minimum now** (number + must-have terms like team role).
 
-## Domain Focus: AI-Native Compression for Edge Analytics
+If you have:
+- [ ] Quantified surprise ROI ✓
+- [ ] Hardened plugin ✓
+- [ ] Positive NDA feedback ✓
+- [ ] At least one serious discussion ✓
 
-### Primary: Surveillance & Security
+**Then**: Push for term sheets.
 
-**ROI hook**: 
-> "XX% effective bitrate reduction on normal footage while auto-highlighting implausible events — no extra compute for separate anomaly detection."
+If NOT:
+- Reassess: build more vs. fast exit
+- NNVC window is not infinite
 
-**Why now**:
-- Edge AI exploding (2026 trends)
-- Low-bandwidth monitoring demand
-- AI-driven incident response
+### The Provocative Question
 
-### Secondary: Drones / UAV / Defense
+A solid mid-eight-figure exit in 3 months is attractive if:
+- Numbers are right
+- Team fit is right
+- De-risks fast-moving NNVC/ECM landscape
 
-**ROI hook**:
-> "Physics-aware rate control reduces satellite/5G link costs dramatically."
-
-**Why now**:
-- Defense budgets for autonomous ISR
-- Bandwidth-constrained transmission
-- Onboard AI integration
-
-### Positioning: "AI-Native Compression for Edge Analytics"
-
-Frame as **intelligent compression** rather than general-purpose codec:
-- Higher margin
-- Less direct standards competition
-- Clear ROI story
+**Holding 12 months only makes sense with**:
+- Clear traction signals (paid pilots, stronger benchmarks)
+- No cooling in AI-video IP appetite
 
 ---
 
-## Valuation Realism
+## Positioning: "AI-Native Edge Video Compression"
 
-### Reference Points
+### Why This Framing Works
 
-- **Deep Render / InterDigital** (Oct 2025): Cash deal, value in patents + AI talent
-- Deep Render had: independent evaluations, FFmpeg/VLC integration, BD-rate vs. AV1
+| Element | Why It Matters |
+|---------|---------------|
+| "AI-native" | Signals learned/hybrid approach, not traditional codec |
+| "Edge" | Targets fastest-growing market (edge AI, cameras, IoT) |
+| "Built-in anomaly awareness" | Concrete, demo-able, defensible |
+| "Semantic surprise detection" | The technical moat — easy to explain |
+
+### Core Narrative
+
+> "LeWM-VC turns recent stable pixel-to-latent prediction into production compression with built-in semantic intelligence. Semantic surprise detection automatically identifies physics-implausible events and allocates bits accordingly. Positioned exactly where InterDigital is betting post-Deep Render."
+
+---
+
+## Valuation Anchors
+
+### Reference: Deep Render / InterDigital
+
+- **Oct 30, 2025** cash deal
+- Value: patents/goodwill > product
+- Focus: AI talent + patents + "AI-native" acceleration
 
 ### To Command Better Valuation
 
-- Quantified surprise savings on edge content
-- Production readiness signals (fuzz-tested, ARM builds)
-- Patent-backed metrics
-
-### Valuation Factors
-
 | Factor | Impact |
 |--------|--------|
-| JEPA + semantic features | Novelty premium |
-| Surveillance ROI data | Commercial proof premium |
+| Surveillance-specific ROI data | Commercial proof premium |
 | Hardened FFmpeg plugin | Production readiness |
-| Provisional patents | Defensibility |
-| Team + advisors | Scalability signal |
+| Patent pending on surprise | Defensibility |
+| Team + advisor | Scalability signal |
 
 ---
 
 ## Team & Advisors
 
-**If solo/small, line up advisors NOW:**
+### If Solo/Small — Line Up Advisors NOW
 
-- [ ] Codec industry advisor (MPEG/JVET experience)
-- [ ] IP/patent attorney
-- [ ] Business development (optional for deal flow)
+- [ ] **Codec industry advisor** (MPEG/JVET experience)
+  - Signals scalability during diligence
+  - Opens warm doors
+- [ ] **IP/patent attorney**
+- [ ] **Business development** (optional for deal flow)
 
-Acquirers like InterDigital bought teams + patents — show you can integrate.
+Acquirers like InterDigital bought teams + patents.
 
 ---
 
 ## Quick-Win Checklist: This Week
 
-| # | Action | Owner | Done |
-|---|--------|-------|------|
-| 1 | FFmpeg thread-safety test | | [ ] |
-| 2 | FFmpeg fuzzing | | [ ] |
-| 3 | ARM64 build + test | | [ ] |
-| 4 | Acquire surveillance footage | | [ ] |
-| 5 | Run surprise-gating benchmark | | [ ] |
-| 6 | Create 2-min demo video | | [ ] |
-| 7 | File provisional patents | | [ ] |
-| 8 | Draft confidential teaser | | [ ] |
+| # | Action | Done |
+|---|--------|------|
+| 1 | FFmpeg thread-safety test | [ ] |
+| 2 | FFmpeg fuzzing | [ ] |
+| 3 | ARM64 build + test | [ ] |
+| 4 | Acquire surveillance footage | [ ] |
+| 5 | Run surprise-gating benchmark | [ ] |
+| 6 | Create 2-min split-screen demo | [ ] |
+| 7 | File provisional patents | [ ] |
+| 8 | Draft confidential teaser | [ ] |
+| 9 | Line up codec advisor | [ ] |
+| 10 | Define minimum exit number | [ ] |
 
 ---
 
 ## Technical Summary
 
-### Why LeWM-VC is defensible
+### Why LeWM-VC is Defensible
 
 1. **SIGReg stability**: Only 2 losses (MSE + SIGReg), no EMA teacher
 2. **Gaussian latents**: 192-dim isotropic Gaussians = near-ideal entropy prior
@@ -350,7 +284,7 @@ Acquirers like InterDigital bought teams + patents — show you can integrate.
 4. **JEPA architecture**: Temporal prediction without explicit motion estimation
 5. **Clean integration**: Production-ready FFmpeg C wrapper
 
-### Key parameters (v1)
+### Key Parameters (v1)
 
 | Component | Value |
 |----------|-------|
