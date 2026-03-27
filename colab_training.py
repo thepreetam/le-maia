@@ -263,4 +263,4 @@ def train(epochs=100, batch_size=4, lr=1e-4, resolution=512):
 
 if __name__ == "__main__":
     # Train with 512x512 resolution for better quality
-    train(epochs=100, batch_size=4, lr=1e-4, resolution=512)
+    train(epochs=100, batch_size=2, lr=1e-4, resolution=512)
