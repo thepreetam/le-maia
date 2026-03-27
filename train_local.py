@@ -1,43 +1,31 @@
-# LeWM-VC GPU Training on Google Colab (Improved Version)
-# Runtime: Runtime -> Change runtime type -> GPU
-# Improvements: Skip connections, residual blocks, perceptual loss, higher resolution
+#!/usr/bin/env python3
+"""
+LeWM-VC Training Script for AMD/NVIDIA GPUs
+Supports: AMD ROCm, NVIDIA CUDA, CPU fallback
 
-# Install dependencies
-!pip install torch torchvision numpy opencv-python tqdm lpips
+Usage:
+    python train_local.py --video-dir ./datasets/pevid-hd --epochs 100 --resolution 512
+"""
 
-# Clone the repo
-!git clone https://github.com/thepreetam/le-maia.git
-%cd le-maia
-
+import argparse
+import glob
+import os
 import sys
-sys.path.insert(0, 'src')
 
+import cv2
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import cv2
-import numpy as np
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
-# Mount Google Drive and use local videos
-print("Mounting Google Drive...")
-from google.colab import drive
-drive.mount('/content/drive')
-
-# Use videos from Google Drive
-print("Using videos from /content/drive/My Drive/le-maia/datasets/pevid-hd")
-VIDEO_DIR = '/content/drive/My Drive/le-maia/datasets/pevid-hd'
-
-print(f"\nCUDA available: {torch.cuda.is_available()}")
-print(f"Device: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU'}")
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 from lewm_vc.encoder import LeWMEncoder
 
 
 class ResidualBlock(nn.Module):
-    """Residual block with instance normalization."""
-
     def __init__(self, channels: int):
         super().__init__()
         self.norm1 = nn.InstanceNorm2d(channels)
@@ -55,8 +43,6 @@ class ResidualBlock(nn.Module):
 
 
 class LeWMDecoder(nn.Module):
-    """Improved decoder with residual blocks and deeper architecture."""
-
     def __init__(self, latent_dim=192, hidden_dim=512, output_channels=3):
         super().__init__()
         self.proj = nn.Conv2d(latent_dim, hidden_dim, kernel_size=1)
@@ -143,67 +129,120 @@ class VideoAutoencoder(nn.Module):
         return reconstructed, latent
 
 
-def train(epochs=100, batch_size=2, lr=1e-4, resolution=512):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f"Training on: {device}")
-    print(f"Resolution: {resolution}x{resolution}")
+def get_device():
+    if torch.cuda.is_available():
+        return torch.device('cuda'), torch.cuda.get_device_name(0)
+    elif hasattr(torch.backends, 'hip') and torch.backends.hip.is_available():
+        return torch.device('hip'), torch.cuda.get_device_name(0) if torch.cuda.is_available() else "AMD GPU"
+    return torch.device('cpu'), 'CPU'
 
-    import glob
-    video_paths = glob.glob(f'{VIDEO_DIR}/*.mpg') + glob.glob(f'{VIDEO_DIR}/*.mp4') + glob.glob(f'{VIDEO_DIR}/*.avi')
+
+def save_demo_video(model, dataloader, device, output_path, num_frames=50):
+    model.eval()
+    with torch.no_grad():
+        batch = next(iter(dataloader)).to(device)
+        reconstructed, _ = model(batch[:1])
+        
+        frames = []
+        for i in range(min(num_frames, reconstructed.shape[1])):
+            recon_frame = reconstructed[0, i].permute(1, 2, 0).cpu().numpy()
+            recon_frame = (recon_frame * 255).astype('uint8')
+            
+            orig_frame = batch[0, i].permute(1, 2, 0).cpu().numpy()
+            orig_frame = (orig_frame * 255).astype('uint8')
+            
+            combined = np.hstack([orig_frame, recon_frame])
+            frames.append(combined)
+        
+        if frames:
+            h, w = frames[0].shape[:2]
+            out = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'mp4v'), 30, (w, h))
+            for frame in frames:
+                out.write(frame)
+            out.release()
+            print(f"Demo saved to {output_path}")
+
+
+def main():
+    parser = argparse.ArgumentParser(description='LeWM-VC Training')
+    parser.add_argument('--video-dir', type=str, default='./datasets/pevid-hd', help='Directory with video files')
+    parser.add_argument('--epochs', type=int, default=100, help='Number of epochs')
+    parser.add_argument('--batch-size', type=int, default=2, help='Batch size')
+    parser.add_argument('--resolution', type=int, default=512, help='Frame resolution (square)')
+    parser.add_argument('--lr', type=float, default=1e-4, help='Learning rate')
+    parser.add_argument('--checkpoint-dir', type=str, default='./checkpoints_improved', help='Checkpoint directory')
+    parser.add_argument('--workers', type=int, default=4, help='DataLoader workers')
+    args = parser.parse_args()
+
+    device, device_name = get_device()
+    print(f"Training on: {device} ({device_name})")
+    print(f"Resolution: {args.resolution}x{args.resolution}")
+    print(f"Batch size: {args.batch_size}")
+    print(f"Epochs: {args.epochs}")
+
+    video_paths = (
+        glob.glob(f'{args.video_dir}/*.mpg') +
+        glob.glob(f'{args.video_dir}/*.mp4') +
+        glob.glob(f'{args.video_dir}/*.avi')
+    )
 
     if not video_paths:
-        print("No videos found!")
+        print(f"No videos found in {args.video_dir}")
+        print("Download PEViD-HD dataset:")
+        print("  wget https://cv.khu.ac.kr/PEViD-HD/PEViD-HD.zip")
         return
 
-    print(f"Found {len(video_paths)} videos: {video_paths}")
+    print(f"Found {len(video_paths)} videos")
 
-    dataset = VideoDataset(video_paths, frame_size=(resolution, resolution), frames_per_clip=4)
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=2)
+    dataset = VideoDataset(
+        video_paths,
+        frame_size=(args.resolution, args.resolution),
+        frames_per_clip=4
+    )
+    dataloader = DataLoader(
+        dataset,
+        batch_size=args.batch_size,
+        shuffle=True,
+        num_workers=args.workers,
+        pin_memory=True
+    )
 
     model = VideoAutoencoder(latent_dim=192).to(device)
 
-    # Setup perceptual loss (LPIPS)
+    perceptual_loss_fn = None
     try:
         import lpips
         perceptual_loss_fn = lpips.LPIPS(net='vgg').to(device)
-        use_perceptual = True
         print("LPIPS perceptual loss enabled")
-    except Exception as e:
-        print(f"LPIPS not available: {e}, using only L1 loss")
-        perceptual_loss_fn = None
-        use_perceptual = False
+    except ImportError:
+        print("LPIPS not available, using only L1 loss")
 
-    optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=0.01)
-    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
+    optimizer = optim.AdamW(model.parameters(), lr=args.lr, weight_decay=0.01)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
     l1_loss_fn = nn.L1Loss()
 
-    import os
-    os.makedirs('checkpoints_improved', exist_ok=True)
+    os.makedirs(args.checkpoint_dir, exist_ok=True)
 
-    for epoch in range(epochs):
+    for epoch in range(args.epochs):
         model.train()
         total_loss = 0
         total_l1 = 0
         total_perc = 0
         num_batches = 0
 
-        pbar = tqdm(dataloader, desc=f"Epoch {epoch+1}/{epochs}")
+        pbar = tqdm(dataloader, desc=f"Epoch {epoch+1}/{args.epochs}")
         for batch in pbar:
             batch = batch.to(device)
             optimizer.zero_grad()
 
             reconstructed, latent = model(batch)
-
-            # Combined loss: L1 + perceptual (if available)
             loss_l1 = l1_loss_fn(reconstructed, batch)
 
-            if use_perceptual and perceptual_loss_fn is not None and epoch > 5:
-                # LPIPS expects 4D: flatten batch and frames
+            if perceptual_loss_fn is not None and epoch > 5:
                 b, f, c, h, w = reconstructed.shape
-                reconstructed_4d = reconstructed.view(b * f, c, h, w)
+                recon_4d = reconstructed.view(b * f, c, h, w)
                 batch_4d = batch.view(b * f, c, h, w)
-                # LPIPS expects [-1, 1] range
-                loss_perc = perceptual_loss_fn(reconstructed_4d * 2 - 1, batch_4d * 2 - 1).mean()
+                loss_perc = perceptual_loss_fn(recon_4d * 2 - 1, batch_4d * 2 - 1).mean()
                 loss = loss_l1 + 0.1 * loss_perc
                 total_perc += loss_perc.item()
             else:
@@ -217,43 +256,44 @@ def train(epochs=100, batch_size=2, lr=1e-4, resolution=512):
             total_loss += loss.item()
             total_l1 += loss_l1.item()
             num_batches += 1
-            pbar.set_postfix({'loss': f'{loss.item():.4f}', 'l1': f'{loss_l1.item():.4f}'})
+            pbar.set_postfix({'loss': f'{loss.item():.4f}'})
 
         scheduler.step()
         avg_loss = total_loss / num_batches
         avg_l1 = total_l1 / num_batches
         avg_perc = total_perc / max(1, num_batches)
 
-        print(f"Epoch {epoch+1}: Loss = {avg_loss:.4f}, L1 = {avg_l1:.4f}, Perceptual = {avg_perc:.4f}")
+        print(f"Epoch {epoch+1}: Loss={avg_loss:.4f}, L1={avg_l1:.4f}, Perc={avg_perc:.4f}")
 
         if (epoch + 1) % 10 == 0:
+            ckpt_path = f'{args.checkpoint_dir}/autoencoder_e{epoch+1}.pt'
             torch.save({
                 'encoder': model.encoder.state_dict(),
                 'decoder': model.decoder.state_dict(),
                 'optimizer': optimizer.state_dict(),
                 'epoch': epoch,
                 'loss': avg_loss,
-            }, f'checkpoints_improved/autoencoder_e{epoch+1}.pt')
+            }, ckpt_path)
+            print(f"Saved {ckpt_path}")
 
-            # Quick validation
             model.eval()
             with torch.no_grad():
                 val_batch = next(iter(dataloader)).to(device)
                 val_recon, _ = model(val_batch)
                 val_loss = l1_loss_fn(val_recon, val_batch)
-                print(f"Validation L1 loss: {val_loss.item():.4f}")
+                print(f"Validation L1: {val_loss.item():.4f}")
 
+    final_path = f'{args.checkpoint_dir}/autoencoder_final.pt'
     torch.save({
         'encoder': model.encoder.state_dict(),
         'decoder': model.decoder.state_dict(),
-    }, 'checkpoints_improved/autoencoder_final.pt')
+    }, final_path)
+    print(f"Saved {final_path}")
 
+    print("Generating demo video...")
+    save_demo_video(model, dataloader, device, 'demo_trained_amd.mp4')
     print("Training complete!")
-    from google.colab import files
-    for f in sorted(glob.glob('checkpoints_improved/*.pt')):
-        files.download(f)
 
 
 if __name__ == "__main__":
-    # Train with 512x512 resolution for better quality
-    train(epochs=100, batch_size=2, lr=1e-4, resolution=512)
+    main()
