@@ -20,21 +20,14 @@ import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
 
-# Download sample videos for training
-print("Downloading sample videos...")
-!mkdir -p datasets/pevid-hd
+# Mount Google Drive and use local videos
+print("Mounting Google Drive...")
+from google.colab import drive
+drive.mount('/content/drive')
 
-print("Downloading Big Buck Bunny...")
-!cd datasets/pevid-hd && wget -q "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" -O bbb.mp4
-
-print("Downloading Tears of Steel...")
-!cd datasets/pevid-hd && wget -q "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4" -O tos.mp4
-
-print("Downloading Elephant Dream...")
-!cd datasets/pevid-hd && wget -q "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" -O ed.mp4
-
-!echo "=== Videos downloaded ==="
-!ls -lh datasets/pevid-hd/
+# Use videos from Google Drive
+print("Using videos from /content/drive/le-maia/datasets/pevid-hd/")
+VIDEO_DIR = '/content/drive/le-maia/datasets/pevid-hd'
 
 print(f"\nCUDA available: {torch.cuda.is_available()}")
 print(f"Device: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU'}")
@@ -150,13 +143,13 @@ class VideoAutoencoder(nn.Module):
         return reconstructed, latent
 
 
-def train(epochs=100, batch_size=4, lr=1e-4, resolution=512):
+def train(epochs=100, batch_size=2, lr=1e-4, resolution=512):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Training on: {device}")
     print(f"Resolution: {resolution}x{resolution}")
 
     import glob
-    video_paths = glob.glob('datasets/pevid-hd/*.mp4')
+    video_paths = glob.glob(f'{VIDEO_DIR}/*.mpg') + glob.glob(f'{VIDEO_DIR}/*.mp4') + glob.glob(f'{VIDEO_DIR}/*.avi')
 
     if not video_paths:
         print("No videos found!")
